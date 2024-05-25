@@ -1,0 +1,109 @@
+<div
+  class="modal fade"
+  id="filterModal"
+  tabindex="-1"
+  aria-labelledby="filterModalLabel"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="filterModalLabel">
+          All Quiz Analysis
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div >
+          <div class=" mt-3   row ">
+            <div class="col-6">
+
+              <label>Date From :</label>
+              <input
+                type="date"
+                name="dateselect"
+                id="dateselectfrom"
+                class="form-control mb-2 "
+                onchange="getQuizzes()"
+              />
+            </div>
+            <div class="col-6">
+
+              <label>To :</label>
+              <input
+                type="date"
+                name="dateselect"
+                id="dateselectto"
+                class="form-control "
+                onchange="getQuizzes()"
+              />
+            </div>
+          </div>
+          <div class="row">
+
+            <div class="col-sm-4 mt-3">
+              <label>Subject</label>
+              <select
+                class="form-control"
+                name="subjectselect"
+                id="subjectselect"
+                onchange="getQuizzes()"
+              >
+                <option id="all" value="" selected>SELECT SUBJECT</option>
+                <% subData.forEach(element=> { %>
+                <option value="<%= element._id %>"><%=element.name%></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-sm-4 mt-3">
+              <label>Type</label>
+              <select
+                class="form-control"
+                name="typeselect"
+                id="typeselect"
+                onchange="getQuizzes()"
+              >
+                <option value="" selected>SELECT TYPE</option>
+                <option value="2">Final</option>
+                <option value="1">Training</option>
+              </select>
+            </div>
+            <div class="col-sm-4 mt-3">
+              <label>Quiz</label>
+              <select
+                class="form-control"
+                name="quizselect"
+                id="quizselect"
+              ></select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer d-flex align-items-center">
+        <div>
+
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+        </div>
+        <div>
+          <button
+            style="height: min-content"
+            class="btn btn-primary"
+            onclick="filterDataTable()"
+            data-bs-dismiss="modal"
+          >
+            GENERATE
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

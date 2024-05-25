@@ -1,0 +1,112 @@
+<%- include('../partials/header') -%>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<%- include('../partials/footer')-%>
+<script>
+    let subject = "<%- subject -%>";
+    let marks_questions = JSON.parse(`<%- JSON.stringify(marks_questions) %>`);
+    let moduleData = JSON.parse(`<%- JSON.stringify(moduleData) %>`);
+</script>
+
+<style>
+    .add-read-more.show-less-content .second-section,
+    .add-read-more.show-less-content .read-less {
+        display: none;
+    }
+
+    .add-read-more.show-more-content .read-more {
+        display: none;
+    }
+
+    .add-read-more .read-more,
+    .add-read-more .read-less {
+        font-weight: bold;
+        margin-left: 2px;
+        color: blue;
+        cursor: pointer;
+    }
+
+    #datatable_wrapper {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+    .select2-selection__rendered {
+        line-height: 31px !important;
+    }
+    .select2-container .select2-selection--single {
+        height: 35px !important;
+    }
+    .select2-selection__arrow {
+        height: 34px !important;
+    }
+</style>
+<div class="grid-container">
+    <!-- Header -->
+    <%- include("./coordinatorHeader") %>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <%- include("./coordinatorSidebar") %>
+
+    <div class="main-container">
+        <div class="col h1">Select Questions</div>
+        <div class="row">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-6">
+                        <button
+                            style="
+                                border-radius: 900px;
+                                height: min-content;
+                                width: 100%;
+                            "
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#filterModal"
+                        >
+                            Filter
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <select id="fields" multiple>
+                            <option value="type">Type</option>
+                            <option value="subject">Subject</option>
+                            <option value="question">Question</option>
+                            <option value="mark">Mark</option>
+                            <option value="module">Module</option>
+                            <option value="difficulty">Difficulty</option>
+                            <option value="createdby">Created By</option>
+                        </select>
+                    </div>
+                </div>
+                <div
+                    class="mb-3"
+                    id="tableDiv"
+                    style="width: 100%; overflow-x: scroll"
+                ></div>
+            </div>
+            <div class="col-4">
+                <div class="row">
+                    <div class="col-6">
+                        <select
+                            id="marksORco"
+                            class="form-control"
+                            onchange="renderCos(this.value)"
+                        >
+                            <option value="module" selected>Module</option>
+                            <option value="marks">Marks</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-primary rounded-pill" onclick="nextPage()">Next</button>
+                    </div>
+                </div>
+                <div class="accordion mt-5" id="coDiv"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('./questionDetail')-%> <%- include('./filterModal')-%>
+
+<script src="/scripts/addQuiz3.js"></script>
+<%- include('../partials/footer2') -%>

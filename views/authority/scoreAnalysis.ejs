@@ -1,0 +1,145 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<div class="grid-container">
+    <!-- Header -->
+    <%- include("./authorityHeader") %>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <%- include("./authoritySidebar") %>
+    <!-- End Sidebar -->
+
+    <!-- Main -->
+    <main class="main-container">
+        <div class="main-title">
+            <div class="h1 ps-5 pe-5 dboard">Score Analysis</div>
+        </div>
+        <div class="row d-flex justify-content-center align-items-stretch mt-3">
+            <div class="col-sm-4 ">
+                <label>Date From :</label>
+                <input
+                    type="date"
+                    name="dateselect"
+                    id="dateselectfrom"
+                    class="form-control mb-2"
+                />
+                <label>To :</label>
+                <input
+                    type="date"
+                    name="dateselect"
+                    id="dateselectto"
+                    class="form-control"
+                />
+            </div>
+            <div class="col-sm-4 ">
+                <label>Type</label>
+                <select class="form-control" name="typeselect" id="typeselect">
+                    <option value="2">Final</option>
+                    <option value="1">Training</option>
+                </select>
+            </div>
+            <div class="col-sm-4 pt-4">
+                <button
+                    style="height: min-content"
+                    class="btn btn-primary"
+                    onclick="postRequest()"
+                >
+                    GENERATE
+                </button>
+            </div>
+        </div>
+        <div class="box-container ps-5 pe-5 mt-5">
+            <div class="bg-white" style="width:91%" id="chart"></div>
+        </div>
+    </main>
+    <!-- End Main -->
+</div>
+<%- include('../partials/footer') -%>
+<script>
+	var chart = null;
+    function renderChart(chartData) {
+		if(chart!= null)
+		{
+			chart.destroy()
+		}
+        var options = {
+            title: {
+                text: "Score Analysis",
+                align: "center",
+                style: {
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  color: "#263238",
+                },
+              },
+            series: [
+                {
+                    data: chartData.map(
+                        (ele) =>
+                            (ele[1].marksObtained / ele[1].totalMarks) * 100
+                    ),
+                    name: "PERFORMANCE",
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: chartData.length * 100,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        position: "top",
+                    },
+                },
+            },
+            dataLabels: {
+                enabled: true,
+                offsetX: -6,
+                style: {
+                    fontSize: "12px",
+                    colors: ["#fff"],
+                },
+                formatter: (val) => val + "%",
+            },
+            stroke: {
+                show: true,
+                width: 1,
+                colors: ["#fff"],
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+                y: {
+                    formatter: (val) => val + "%",
+                },
+            },
+            xaxis: {
+                categories: chartData.map((ele) => ele[1].subject),
+                max: 100,
+                labels: {
+                    formatter: (val) => val + "%",
+                },
+            },
+        };
+        $("#chart").html("");
+        chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+    }
+    function postRequest() {
+        let datefrom = $("#dateselectfrom").val();
+        let dateto = $("#dateselectto").val();
+        let type = $("#typeselect").val();
+        $.ajax({
+            type: "post",
+            url: "/authority/scoreAnalysis",
+            data: { type, datefrom, dateto },
+            success: function (response) {
+                renderChart(response.myArr);
+            },
+        });
+    }
+</script>
+<%- include('../partials/footer2') -%>

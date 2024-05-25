@@ -1,0 +1,134 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<script>
+    let chartData = JSON.parse(`<%- JSON.stringify(myArr) %>`);
+    console.log(chartData);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<div class="grid-container">
+    <!-- Header -->
+    <%- include("./adminHeader") %>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <%- include("./adminSidebar") %>
+    <!-- End Sidebar -->
+
+    <!-- Main -->
+    <main class="main-container">
+        <div class="main-title">
+            <div class="h1 ps-5 pe-5 dboard">
+                <%- type==2?"FINAL":type==1?"TRAINING":"PRACTICE" %> Assesment
+                Analysis
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col-4 text-center">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    onclick="window.open('/admin/generalAnalysis?type=2','_self')"
+                >
+                    FINAL
+                </button>
+            </div>
+            <div class="col-4 text-center">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    onclick="window.open('/admin/generalAnalysis?type=1','_self')"
+                >
+                    TRAINING
+                </button>
+            </div>
+            <div class="col-4 text-center">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    onclick="window.open('/admin/generalAnalysis?type=0','_self')"
+                >
+                    PRACTICE
+                </button>
+            </div>
+        </div>
+        <div class="box-container ps-5 pe-5">
+            <div class="" id="chart"></div>
+        </div>
+    </main>
+    <!-- End Main -->
+</div>
+<%- include('../partials/footer') -%>
+<script>
+    const allSideMenu = document.querySelectorAll(
+        "#sidebar .side-menu.top li a"
+    );
+
+    allSideMenu.forEach((item) => {
+        const li = item.parentElement;
+
+        item.addEventListener("click", function () {
+            allSideMenu.forEach((i) => {
+                i.parentElement.classList.remove("active");
+            });
+            li.classList.add("active");
+        });
+    });
+</script>
+<script>
+    function renderChart() {
+        var options = {
+            series: [
+                {
+                    data: chartData.map((ele) => ele[1].tests),
+                    name: "Tests Given By Students",
+                },
+                {
+                    data: chartData.map((ele) => ele[1].approved),
+                    name: "Approved Students",
+                },
+                {
+                    data: chartData.map((ele) => ele[1].rejected),
+                    name: "Rejected Students",
+                },
+            ],
+            chart: {
+                type: "bar",
+                height:
+                    chartData.length * 100 > 400 ? chartData.length * 100 : 400,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        position: "top",
+                    },
+                },
+            },
+            dataLabels: {
+                enabled: true,
+                offsetX: -6,
+                style: {
+                    fontSize: "12px",
+                    colors: ["#fff"],
+                },
+            },
+            stroke: {
+                show: true,
+                width: 1,
+                colors: ["#fff"],
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+            },
+            xaxis: {
+                categories: chartData.map((ele) => ele[1].subject),
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+    renderChart();
+</script>
+<%- include('../partials/footer2') -%>

@@ -1,0 +1,315 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<style>
+    #analysis,
+    #analysis2 {
+        border: 1px solid #ccc;
+        background-color: #fff;
+        padding-top: 10px;
+        width: 49%;
+        margin-left: 10px;
+    }
+</style>
+
+<div class="grid-container">
+    <%- include("./coordinatorHeader") %> <%- include("./coordinatorSidebar") %>
+
+    <div class="main-container">
+        <div class="row ps-5 pe-5 align-items-center d-flex">
+            <div class="col h1">Modules</div>
+            <div class="col d-flex justify-content-evenly text-end">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moduleOrderModal"
+                >
+                    <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;CHANGE
+                    ORDER
+                </button>
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#moduleModal"
+                >
+                    <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+                    MODULE
+                </button>
+            </div>
+        </div>
+        <table
+            class="uk-table uk-table-hover uk-table-striped text-center"
+            id="datatable"
+        >
+            <thead>
+                <th class="text-center">Sr no.</th>
+                <th class="text-center">Module</th>
+                <th class="text-center">No. of Topics</th>
+                <th class="text-center">Rating</th>
+                <th class="text-center">Actions</th>
+            </thead>
+            <tbody>
+                <% for( let index=0; index < modules.length; index++ ) { %>
+                <tr>
+                    <% let element=modules[index] %>
+                    <td><%= index+1 %></td>
+                    <td><%= element.moduleName %></td>
+                    <td><%= element.topics.length %></td>
+                    <td>
+                        <%= element.rating.toFixed(2) %>/5 (<%= myArr[index] %>
+                        users)
+                    </td>
+                    <td>
+                        <a
+                            href="/coordinator/topics/<%= element._id %>"
+                            class="adder"
+                            ><i class="fa-solid fa-eye"></i
+                        ></a>
+                        <button
+                            data-id="<%=element._id%>"
+                            class="bg-transparent border-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#exampleModal"
+                            onclick="generateLeaderboard(this)"
+                        >
+                            <i
+                                class="fa-solid fa-trophy"
+                                style="color: #e9b824"
+                                ;
+                            ></i>
+                        </button>
+                        <button
+                            data-id="<%=element._id%>"
+                            class="bg-transparent border-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#feedbackModal"
+                            onclick="getFeedback(this)"
+                        >
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </button>
+
+                        <div
+                            class="modal fade"
+                            id="exampleModal10"
+                            tabindex="-1"
+                            role="dialog"
+                            aria-labelledby="exampleModalLabel"
+                            aria-hidden="true"
+                        >
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5
+                                            class="modal-title"
+                                            id="exampleModalLabel"
+                                        >
+                                            Analysis
+                                        </h5>
+                                        <button
+                                            type="button"
+                                            class="close"
+                                            data-dismiss="modal"
+                                            aria-label="Close"
+                                        >
+                                            <span aria-hidden="true"
+                                                >&times;</span
+                                            >
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">...</div>
+                                    <div class="modal-footer">
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary"
+                                            data-dismiss="modal"
+                                        >
+                                            Close
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="btn btn-primary"
+                                        >
+                                            Save changes
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <div class="row" id="chartDetails">
+            <div class="col-6" id="analysis" style="height: 400px"></div>
+            <div class="col-6" id="analysis2" style="height: 400px"></div>
+        </div>
+    </div>
+</div>
+<%- include("./addModule") -%> <%- include("./moduleOrder") -%> <%-
+include("./practiceLeaderboard") -%><%- include("./feedbackModal") -%> <%-
+include('../partials/footer') -%>
+<script>
+    $(document).ready(() => {
+        console.log("hello");
+        moduleAnalysis();
+        modulePerformance();
+        var myTable;
+
+        myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            language: {
+                paginate: {
+                    previous: "<",
+                    next: ">",
+                },
+            },
+            columnDefs: [
+                // Center align the header content of column 1
+                { className: "dt-head-center", targets: [0, 1] },
+            ],
+        });
+    });
+
+    function moduleAnalysis() {
+        let moduleAnalysis = JSON.parse(
+            `<%- JSON.stringify(modulesAnalysis) %>`
+        );
+        let moduleArr = [];
+        let submittedarr = [];
+        let pendingarr = [];
+        moduleAnalysis.forEach((ele) => {
+            moduleArr.push(ele.moduleName);
+            submittedarr.push(ele.submittedTests);
+            pendingarr.push(ele.pendingTests);
+        });
+        var options = {
+            title: {
+                text: "Module Wise Practice Quiz Status",
+                align: "center",
+                style: {
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    color: "#263238",
+                },
+            },
+            series: [
+                {
+                    name: "Submitted",
+                    data: [...submittedarr],
+                },
+                {
+                    name: "Pending",
+                    data: [...pendingarr],
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: moduleAnalysis.length * 100,
+                stacked: true,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        total: {
+                            enabled: true,
+                            offsetX: 0,
+                            style: {
+                                fontSize: "13px",
+                                fontWeight: 900,
+                            },
+                        },
+                    },
+                },
+            },
+            stroke: {
+                width: 1,
+                colors: ["#fff"],
+            },
+            xaxis: {
+                categories: [...moduleArr],
+            },
+
+            fill: {
+                opacity: 1,
+            },
+            legend: {
+                position: "top",
+                horizontalAlign: "left",
+                offsetX: 40,
+            },
+        };
+
+        var chart = new ApexCharts(
+            document.querySelector("#analysis"),
+            options
+        );
+        chart.render();
+    }
+    function modulePerformance() {
+        let moduleAnalysis = JSON.parse(
+            `<%- JSON.stringify(modulesAnalysis) %>`
+        );
+        var options = {
+            title: {
+                text: "Module Wise Performance Analysis",
+                align: "center",
+                style: {
+                    fontSize: "20px",
+                    fontWeight: "bold",
+                    color: "#263238",
+                },
+            },
+            series: [
+                {
+                    name: "PERFORMANCE",
+                    data: moduleAnalysis.map((ele) => ele.performance.toFixed(2)),
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: moduleAnalysis.length * 100,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                },
+            },
+            dataLabels:{
+                enabled:true,
+                formatter:(val)=>val+"%"
+            },
+            stroke: {
+                width: 1,
+                colors: ["#fff"],
+            },
+            xaxis: {
+                categories: moduleAnalysis.map((ele) => ele.moduleName),
+            },
+            yaxis:{
+                max:100
+            },
+            fill: {
+                opacity: 1,
+            },
+            legend: {
+                position: "top",
+                horizontalAlign: "left",
+                offsetX: 40,
+            },
+        };
+
+        var chart = new ApexCharts(
+            document.querySelector("#analysis2"),
+            options
+        );
+        chart.render();
+    }
+</script>
+
+<%- include('../partials/footer2') -%>

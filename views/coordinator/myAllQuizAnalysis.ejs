@@ -1,0 +1,103 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="exampleModalLabel">ALL QUIZ ANALYSIS</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div id="chart">
+
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var chart = null;
+	function createChart() {
+		if (chart != null) {
+			chart.destroy();
+		}
+		var options = {
+			series: [
+				{
+					name: 'PERFORMANCE',
+					group: 'per',
+					data: allQuizData.map(ele => (((ele.marksObtained / ele.totalMarksObtained) * 100)).toFixed(2))
+				},
+				{
+					name: "ATTENDANCE",
+					group: 'per2',
+					data: allQuizData.map(ele => ele.attendance)
+				},
+				{
+					name: 'Approved',
+					group: 'certificates',
+					data: allQuizData.map(ele => (((ele.certificates / ele.participants) * 100)).toFixed(2))
+				},
+				{
+					name: 'Pending',
+					group: 'certificates',
+					data: allQuizData.map(ele => ((((ele.participants - ele.certificates - ele.rejected) / ele.participants) * 100)).toFixed(2))
+				},
+				{
+					name: 'Rejected',
+					group: 'certificates',
+					data: allQuizData.map(ele => (((ele.rejected / ele.participants) * 100)).toFixed(2))
+				}
+			],
+			chart: {
+				type: 'bar',
+				height: allQuizData.length * 100,
+				stacked: true,
+			},
+			stroke: {
+				width: 1,
+				colors: ['#fff']
+			},
+			dataLabels: {
+				formatter: (val) => {
+					return val + '%'
+				}
+			},
+			tooltip: {
+				x: {
+					show: true,
+				},
+				y: {
+					formatter: (val, { series, seriesIndex, dataPointIndex, w }) => {
+						return val + "%";
+					}
+				}
+			},
+			plotOptions: {
+				bar: {
+					horizontal: true
+				}
+			},
+			xaxis: {
+				categories: allQuizData.map(ele => ele.name),
+				labels: {
+					formatter: (val) => {
+						return val + '%'
+					}
+				}
+			},
+			fill: {
+				opacity: 1,
+			},
+			//performance,pending,approved,rejected
+			legend: {
+				position: 'top',
+				horizontalAlign: 'left'
+			}
+		};
+
+		chart = new ApexCharts(document.querySelector("#chart"), options);
+		chart.render();
+	}
+</script>

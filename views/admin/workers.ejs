@@ -1,0 +1,120 @@
+<%- include('../partials/header') %>
+	<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+	<link rel="stylesheet" href="/stylesheets/datatables.css" />
+	<div class="grid-container">
+		<%- include("./adminHeader") %> <%- include("./adminSidebar") %>
+				<div class="main-container">
+					<div class="row ps-5 pe-5 align-items-center d-flex">
+						<div class="col h1">
+							Workers
+						</div>
+						<div class="col ps-5 pe-5  d-flex">
+							<div class="row   ">
+								<div class="col-auto d-flex flex-row-reverse justify-content-center align-items-center">
+									<label class="text-end me-0" style="width: 100%;">Select District</label>
+								</div>
+								<div class="col-auto">
+
+									<select  style="width: 100%;"   class="form-control" name="districtselect" id="districtselect"
+										onchange="filterDataTable()">
+										<option value="All" id="all">All</option>
+										<% district_data.forEach(element=> { %>
+											<option value="<%= element._id %>">
+												<%= element.name %>
+											</option>
+											<% }) %>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="mb-3" id="tableDiv" style="overflow: hidden"></div>
+				</div>
+	</div>
+	<%- include('../partials/footer') -%>
+		<script>
+			$(document).ready(() => {
+				$("#all").change();
+			});
+			$(document).ready(() => {
+				$(document).on("click", ".delete", (e) => {
+					e.preventDefault();
+					//   console.log($(this).data("fruit"));
+					let id = e.currentTarget.getAttribute("data-id");
+
+					Swal.fire({
+						title: "Are you sure?",
+						text: "You won't be able to revert this!",
+						icon: "warning",
+						showCancelButton: true,
+						confirmButtonColor: "#3085d6",
+						cancelButtonColor: "#d33",
+						confirmButtonText: "Yes, delete it!",
+					}).then((result) => {
+						if (result.isConfirmed) {
+							window.location = "/admin/students/delete/" + id;
+							//   Swal.fire("Deleted!", "Your file has been deleted.", "success");
+						}
+					});
+				});
+			});
+			function getAge(dateString) {
+				var today = new Date();
+				var birthDate = new Date(dateString);
+				var age = today.getFullYear() - birthDate.getFullYear();
+				var m = today.getMonth() - birthDate.getMonth();
+				if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+					age--;
+				}
+				return age;
+			}
+			function filterDataTable() {
+				let district = $("#districtselect").val();
+				$.ajax({
+					type: "POST",
+					url: "/admin/getWorker",
+					data: { district },
+					success: function (response) {
+						if (response.length !== 0) {
+							workers = response.workerData
+							// questions.forEach((ele)=>{console.log(ele.course_outcome_id)})
+							let def =
+								"<table class='uk-table uk-table-hover uk-table-striped text-center' id='datatable'><thead><th>Sr No.</th><th>Username</th><th>District</th><th>Email</th><th>Age</th><th>Action</th></thead>";
+							let data = "";
+							let ind = 1;
+							workers.forEach((ele) => {
+								data += "<tr>";
+								data += `<td>${ind++}</td>`;
+								data += `<td>${ele.username}</td>`;
+								data += `<td>${ele.districtId.name} </td>`;
+								data += `<td>${ele.email}</td>`;
+								data += `<td>${getAge(ele.dateOfBirth)}</td>`;
+								data += `<td> <div><a href=""><i class="fa-solid fa-edit edit fa-lg"></i></a><a class="delete" data-id="${ele._id}"><i style="color: red" class="fa-solid fa-trash icon fa-lg"></i></a></div></td>`;
+								data += "</tr>";
+							});
+
+							$("#tableDiv").html(def + data + "</table>");
+							var myTable;
+
+							myTable = $("#datatable").DataTable({
+								pagingType: "simple_numbers",
+								scrollCollapse: true,
+
+								language: {
+									paginate: {
+										previous: "<",
+										next: ">",
+									},
+								},
+							});
+							// abc();
+
+
+						}
+					},
+				});
+			};
+		</script>
+
+		<%- include('../partials/sweetalert') %> <%- include('../partials/footer2') -%>

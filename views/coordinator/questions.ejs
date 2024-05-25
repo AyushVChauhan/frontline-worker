@@ -1,0 +1,306 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<style>
+    .add-read-more.show-less-content .second-section,
+    .add-read-more.show-less-content .read-less {
+        display: none;
+    }
+
+    .add-read-more.show-more-content .read-more {
+        display: none;
+    }
+
+    .add-read-more .read-more,
+    .add-read-more .read-less {
+        font-weight: bold;
+        margin-left: 2px;
+        color: blue;
+        cursor: pointer;
+    }
+</style>
+<div class="grid-container">
+    <%- include("./coordinatorHeader") %> <%- include("./coordinatorSidebar") %>
+    <div class="main-container">
+        <div class="row mb-3">
+            <div class="col-9 h1">Questions</div>
+            <div class="col-3 text-end">
+                <a href="/coordinator/addQuestion/topics">
+                    <button
+                        style="border-radius: 900px; height: min-content"
+                        class="btn btn-primary"
+                    >
+                        <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+                        QUESTION
+                    </button></a
+                >
+            </div>
+        </div>
+        <div>
+            <div class="row">
+                <div class="col-sm-3 mb-4">
+                    <label>Type</label>
+                    <select
+                        class="form-control"
+                        id="typeselect"
+                        name="typeselect"
+                    >
+                        <option selected="" value="All">All</option>
+                        <option value="1">MCQ</option>
+                        <option value="2">ONE WORD</option>
+                        <option value="3">DESCRIPTIVE</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-3 mb-4">
+                    <label>Subject</label>
+                    <select
+                        class="form-control"
+                        name="subjectselect"
+                        id="subjectselect"
+                    >
+                        <option selected="" value="All">All</option>
+                        <% subData.subjectIds.forEach(element=> { %>
+                        <option value="<%= element._id %>">
+                            <%=element.name%>
+                        </option>
+                        <% }) %>
+                    </select>
+                </div>
+
+                <div class="col-sm-3 mb-4">
+                    <label>Difficulty Level</label>
+                    <select
+                        class="form-control"
+                        name="difficultyselect"
+                        id="difficultyselect"
+                    >
+                        <option value="All" selected="">All</option>
+                        <option value="1">Easy</option>
+                        <option value="2">Medium</option>
+                        <option value="3">Hard</option>
+                    </select>
+                </div>
+                <div class="col-sm-3 mb-4">
+                    <label>Created By</label>
+                    <select
+                        class="form-control"
+                        name="createdbyselect"
+                        id="createdbyselect"
+                    >
+                        <option value="All" selected="">All</option>
+                        <option value="1">By me</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button
+                        type="button"
+                        id="generateDataTable"
+                        class="btn btn-primary text-center mb-3"
+                        width=""
+                    >
+                        Generate
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-3" id="tableDiv" style="overflow: hidden"></div>
+        </div>
+        <%- include('./questionDetail')-%>
+    </div>
+
+    <%- include('../partials/footer') %>
+    <script>
+        function seer(e) {
+            let id = e.getAttribute("data-id");
+            $.ajax({
+                type: "POST",
+                url: "/coordinator/questionDetail",
+                data: { id },
+                success: function (response) {
+                    // console.log(response);
+                    let data = response.questionDetail;
+                    let subcodeqdetail = null;
+                    let subnameqdetail = null;
+                    let moduleDetail = null;
+                    let topicqdetail = [];
+
+                    data.topicId.forEach((element) => {
+                        moduleDetail = element.moduleId.moduleName;
+                        topicqdetail.push(element.topic);
+                        subnameqdetail = element.moduleId.subjectId.name;
+                    });
+                    console.log(data);
+                    let typeqdetail = null;
+                    let difficultyqdetail = null;
+                    if (data.type == 1) {
+                        typeqdetail = "MCQ";
+                    }
+                    if (data.type == 2) {
+                        typeqdetail = "One Word";
+                    }
+                    if (data.type == 3) {
+                        typeqdetail = "Descriptive";
+                    }
+                    if (data.difficulty == 1) {
+                        difficultyqdetail = "Easy";
+                    }
+                    if (data.difficulty == 2) {
+                        difficultyqdetail = "Medium";
+                    }
+                    if (data.difficulty == 3) {
+                        difficultyqdetail = "Hard";
+                    }
+                    let html =
+                        "<div class='question'><div class='modalQuestion me-2'><h4><b>Question :</b></h4></div><div class='modalQuestion'> " +
+                        data.question +
+                        `</div></div>`;
+
+                    if (data.type == 1) {
+                        html +=
+                            " <div class='row' ><div class='modalQuestion col-auto'><h4><b>Option :</b></h4></div><div class='modalQuestion col'><ol style='list-style-type: upper-alpha;font-size:20px'>";
+
+                        data.options.forEach((element) => {
+                            if (element.option == data.answer)
+                                html +=
+                                    "<li style='color:green;'>" +
+                                    element.option +
+                                    "</li>";
+                            else html += "<li>" + element.option + "</li>";
+                        });
+                        html += "</ol></div>";
+                    }
+
+                    html +=
+                        "<div><div class='modalQuestion me-2'><h4><b>Answer :</b></h4></div><div class='modalQuestion' style='color:green; font-size: 20px '> " +
+                        data.answer +
+                        "</b></div></div></div><div><div class='modalQuestion me-2'><h4><b>Marks :</b></h4></div><div class='modalQuestion'> " +
+                        data.marks +
+                        "</div></div></div><div><div class='modalQuestion me-2'><h4><b>Type :</b></h4></div><div class='modalQuestion'> " +
+                        typeqdetail +
+                        "</div></div></div><div><div class='modalQuestion me-2'><h4><b>Difficulty:</b></h4></div><div class='modalQuestion'> " +
+                        difficultyqdetail +
+                        "</div></div></div><div><div class='modalQuestion me-2'><h4><b>Subject:</b></h4></div><div class='modalQuestion'> " +
+                        subnameqdetail +
+                        "</div></div></div><div><div class='modalQuestion me-2'><h4><b>Module : </b></h4></div><div class='modalQuestion'> " +
+                        moduleDetail +
+                        "</div></div></div><div class='row'><div class='modalQuestion col-auto'><h4><b>Topic :</b></h4></div><div class='modalQuestion col'><ul> ";
+                    topicqdetail.forEach((ele) => {
+                        html += `<li>${ele}</li>`;
+                    });
+                    html +=
+                        "</ul></div></div></div><div><div class='modalQuestion me-2'><h4><b>Time required(in Seconds) :</b></h4></div><div class='modalQuestion'>" +
+                        data.time_required;
+                    html +=
+                        "</div></div></div><div><div class='modalQuestion me-2'><h4><b>Created By :</b></h4></div><div class='modalQuestion'>" +
+                        data.created_by.username +
+                        "</div></div></div>";
+                    $(".modal-body").html(html);
+                    // $('#largeModal').modal('show');
+                    $("#questionDetailModal").modal("show");
+                },
+            });
+        }
+
+        async function deleteQuestion(e) {
+            console.log(e);
+            let id = e.getAttribute("data-id");
+            console.log(id);
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location = "/coordinator/deleteQuestion/" + id;
+                    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+                }
+            });
+        }
+
+        $("#generateDataTable").click(() => {
+            let subject = $("#subjectselect").val();
+            let type = $("#typeselect").val();
+            let difficulty = $("#difficultyselect").val();
+            let createdby = $("#createdbyselect").val();
+            // console.log("hi");
+            let mark = "All";
+            let topic = "All";
+            let module = "All";
+            $.ajax({
+                type: "POST",
+                url: "/coordinator/getQuestion",
+                data: {
+                    subject,
+                    type,
+                    difficulty,
+                    createdby,
+                    module,
+                    mark,
+                    topic,
+                },
+                success: function (response) {
+                    if (response.length !== 0) {
+                        let questions = response.questionData;
+                        // questions.forEach((ele)=>{console.log(ele.course_outcome_id)})
+                        let def =
+                            "<table class='uk-table uk-table-hover uk-table-striped text-center' id='datatable'><thead><th>Sr No.</th><th>Type</th><th>Subject</th><th>Question</th><th>Action</th></thead>";
+                        let data = "";
+                        let type1 = null;
+                        let subject1 = null;
+                        let ind = 1;
+                        questions.forEach((ele) => {
+                            if (ele.topicId.length > 0 && ele.topicId[0].moduleId != null) {
+                                console.log("hii");
+                                if (ele.type == 1) {
+                                    type1 = "MCQ";
+                                }
+                                if (ele.type == 2) {
+                                    type1 = "ONE WORD";
+                                }
+                                if (ele.type == 3) {
+                                    type1 = "DESCRIPTIVE";
+                                }
+                                data += "<tr>";
+                                data += `<td>${ind++}</td>`;
+                                data += `<td>${type1}</td>`;
+                                //ele.course_outcome_id.forEach((element) => {
+                                //    subject1 = element.topicId[0].moduleId.subjectId.name;
+                                //});
+                                data += `<td>${ele.topicId[0].moduleId.subjectId.name}</td>`;
+                                data += `<td class="" style="text-justify: auto;text-align: justify;">${ele.question}</td>`;
+                                data += `<td><a data-id='${ele._id}' onclick='seer(this)' class='adder' ><i class='fa-solid fa-eye'></i></a><a style="margin-left: 15px;" data-id='${ele._id}' onclick='deleteQuestion(this)'><i class="text-danger fa-solid fa-trash"></i></a></td>`;
+                                data += "</tr>";
+                            }
+                        });
+
+                        $("#tableDiv").html(def + data + "</table>");
+                        var myTable;
+
+                        myTable = $("#datatable").DataTable({
+                            pagingType: "simple_numbers",
+                            scrollCollapse: true,
+
+                            language: {
+                                paginate: {
+                                    previous: "<",
+                                    next: ">",
+                                },
+                            },
+                        });
+
+                        // abc();
+                        // AddReadMore();
+                    }
+                },
+            });
+        });
+    </script>
+    <%- include('../partials/footer2') -%>
+</div>

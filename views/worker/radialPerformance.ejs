@@ -1,0 +1,105 @@
+<html>
+
+<head>
+  <title>Chart</title>
+
+  <style>
+    .chart-container {
+      padding: 10px;
+      margin: 10px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+  let analysis = JSON.parse(`<%- JSON.stringify(data) %>`);
+  console.log(analysis);
+</script>
+<style>
+  * {
+    font-size: 30px !important;
+  }
+
+  .col-6 {
+    margin: 0;
+  }
+</style>
+
+<body>
+  <div class="chart-container">
+    <div id="marks" style=" padding-top:6% ; margin-top:40%;box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.1),
+                inset -2px -2px 5px rgba(0, 0, 0, 0.1);"></div>
+  </div>
+
+  <script>
+    function marks() {
+      var options = {
+        series: [
+          {
+            name: "PERFORMANCE",
+            data: analysis.map((ele) => ele.performance),
+          },
+        ],
+        chart: {
+          type: "radar",
+        },
+        dataLabels: {
+          enabled: true, // change
+          background: {
+            enabled: true,
+            borderRadius: 2,
+          },
+          formatter: (val) => val + "%",
+        },
+        plotOptions: {
+          radar: {
+            size: 170,
+            offsetY: 50,
+            polygons: {
+              strokeColors: "#fff",
+              fill: {
+                colors: ["#3498db"],
+              },
+            },
+          },
+        },
+        title: {
+          text: "Practice Test Performance",
+          align: "center",
+          style: {
+            fontSize: "50px",
+            fontWeight: "bold",
+            color: "#263238",
+          },
+        },
+        colors: ["#000", "#2ecc71", "#e74c3c"],
+        markers: {
+          size: 6,
+          colors: ["#fff"],
+          strokeColor: "#FF4560",
+          strokeWidth: 2,
+        },
+        xaxis: {
+          categories: analysis.map((ele) => ele.module),
+          labels: {
+            style: {
+              fontSize: '16px',
+            },
+          },
+        },
+        yaxis: {
+          max: 100,
+          min: 0,
+          show: false,
+        },
+      };
+
+      var chart = new ApexCharts(document.querySelector("#marks"), options);
+      chart.render();
+    }
+    marks();
+  </script>
+</body>
+
+</html>

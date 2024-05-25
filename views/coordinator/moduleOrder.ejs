@@ -1,0 +1,162 @@
+<div
+    class="modal fade"
+    id="moduleOrderModal"
+    tabindex="-1"
+    aria-labelledby="moduleModalLabel"
+    aria-hidden="true"
+>
+    <div
+        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable"
+    >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moduleModalLabel">
+                    CHANGE MODULE ORDER
+                </h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+            <div class="modal-body">
+                
+                    <div class="row" >
+                        <div class="col-2 text-center pt-3 pb-3">New Order</div>
+						<div class="col-2 text-center pt-3 pb-3">Old Order</div>
+                        <div class="col-6 text-center pt-3 pb-3">Module</div>
+                        <div class="col-2 text-center pt-3 pb-3">Actions</div>
+                    </div>
+                    <div class="row" id="moduleOrders">
+                    <% modules.forEach((element,index)=> { %>
+                        <div class="col-2 text-center  pb-1 pt-1" ><%= index + 1%></div>
+                        <div class="col-2 text-center pb-1 pt-1">
+                            <%= element.order %>
+                        </div>
+                        <div class="col-6 text-center pb-1 pt-1">
+                            <%= element.moduleName %>
+                        </div>
+                        <div class="col-2 justify-content-around d-flex pb-1 pt-1">
+                            <a data-id="<%= element._id %>" onclick="moveUp(this)"
+                                ><i class="fa-solid fa-angle-up"></i></a
+                            ><a
+                                data-id="<%= element._id %>"
+                                onclick="moveDown(this)"
+                                ><i class="fa-solid fa-angle-down"></i
+                            ></a>
+                        </div>
+						<% }) %>
+                    </div>
+
+                    <input
+                        type="hidden"
+                        name="subjectId"
+                        value="<%= subjectId %>"
+                    />
+
+                    <!-- <div>
+						<label for="sem" class="form-label">Semester :</label>
+						<input
+							type="number"
+							class="form-control"
+							id="sem"
+							name="sem"
+							required
+						/>
+					</div> -->
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+                <button
+                    onclick="changeOrder()"
+                    class="btn btn-primary"
+                    form="sub-form"
+                >
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let modules = JSON.parse(`<%- JSON.stringify(modules) %>`);
+	modules.forEach(ele=>{
+		ele.newOrder = ele.order;
+	})
+	console.log(modules);
+	function moveUp(e) {
+		let id = $(e).data("id");
+		let myIndex = 0;
+		modules.forEach((ele,index)=>{
+			if(id == ele._id)
+			{
+				myIndex = index;
+				return;
+			}
+		})
+		if(myIndex == 0)
+		{
+			return;
+		}
+		let temp = null;
+		temp = modules[myIndex];
+		modules[myIndex] = modules[myIndex - 1];
+		modules[myIndex - 1] = temp;
+		renderDivs()
+	}
+	function moveDown(e) {
+		let id = $(e).data("id");
+		let myIndex = 0;
+
+		modules.forEach((ele,index)=>{
+			if(id == ele._id)
+			{
+				myIndex = index;
+				return;
+			}
+		})
+		if(myIndex >= modules.length - 1)
+		{
+			return;
+		}
+		let temp = null;
+		temp = modules[myIndex];
+		modules[myIndex] = modules[myIndex + 1];
+		modules[myIndex + 1] = temp;
+		renderDivs()
+	}
+	function renderDivs() {
+		$("#moduleOrders").html("");
+		let moduleDivs = "";
+		modules.forEach((element,index)=>{
+			element.newOrder = index + 1;
+			moduleDivs += `<div class="col-2 text-center">${index + 1}</div>`
+			moduleDivs += `<div class="col-2 text-center">${element.order}</div>`
+			moduleDivs += `<div class="col-6 text-center">${element.moduleName}</div>`;
+			moduleDivs += `<div class="col-2 justify-content-around d-flex"><a data-id="${element._id}" onclick="moveUp(this)"><i class="fa-solid fa-angle-up"></i></a><a data-id="${element._id}" onclick="moveDown(this)"><i class="fa-solid fa-angle-down"></i></a></div>`
+		})
+		$("#moduleOrders").html(moduleDivs);
+	}
+	function changeOrder() {
+		$.ajax({
+			type: "POST",
+			url: "/coordinator/modulesOrder",
+			data: {modules},
+			success: function (response) {
+				if(response.success)
+				{
+					location.reload();
+				}
+			}
+		});
+	}
+</script>

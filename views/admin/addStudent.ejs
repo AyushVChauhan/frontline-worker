@@ -1,0 +1,66 @@
+<div
+	class="modal fade"
+	id="studentModal"
+	tabindex="-1"
+	aria-labelledby="studentModalLabel"
+	aria-hidden="true"
+>
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="studentModalLabel">ADD STUDENTS</h5>
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+			<form
+				action="/admin/addStudent"
+				method="POST"
+				enctype="multipart/form-data"
+			>
+				<div class="mb-3">
+					<input
+						type="file"
+						class="form-control"
+						name="excel"
+						id="excel"
+					/>
+				</div>
+				<div class="mb-3">
+					<select class="form-select" name="department">
+						<option selected>Select Department</option>
+						<% dept_data.forEach(element => { %>
+						<option value="<%= element._id %>">
+							<%= element.name %>
+						</option>
+						<% }) %>
+					</select>
+				</div>
+				<div class="mb-3">
+					<select name="semester" class="form-select">
+						<option selected>Select Semester</option>
+						<% for( let index = 1; index < 9; index++ ) { %>
+							<option value="<%= index %>"><%= index %></option>
+						<% } %>
+						<option value="1">1</option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+					<button type="submit" class="btn btn-primary">
+						Save changes
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

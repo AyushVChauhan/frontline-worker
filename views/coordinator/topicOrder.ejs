@@ -1,0 +1,126 @@
+<div class="modal fade" id="topicOrderModal" tabindex="-1" aria-labelledby="topicModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="topicModalLabel">CHANGE TOPIC ORDER</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-2 text-center pt-3 pb-3">New Order</div>
+          <div class="col-2 text-center pt-3 pb-3">Old Order</div>
+          <div class="col-6 text-center pt-3 pb-3">TOPIC</div>
+          <div class="col-2 text-center pt-3 pb-3">Actions</div>
+        </div>
+        <div class="row" id="topicOrders">
+          <% topics.forEach((element,index)=> { %>
+            <div class="col-2 text-center pt-1 pb-2">
+              <%= index + 1%>
+            </div>
+            <div class="col-2 text-center pt-1 pb-2">
+              <%= element.order %>
+            </div>
+            <div class="col-6 text-center pt-1 pb-2">
+              <%=element.topic%>
+            </div>
+            <div class="col-2 justify-content-around d-flex pt-1 pb-2">
+              <a data-id="<%= element._id %>" onclick="moveUp(this)"><i class="fa-solid fa-angle-up"></i></a><a onclick="moveDown(this)"
+                data-id="<%= element._id %>"><i class="fa-solid fa-angle-down"></i></a>
+            </div>
+            <% }) %>
+        </div>
+        <input type="hidden" name="moduleId" value="<%= moduleId %>" />
+
+        <!-- <div>
+						<label for="sem" class="form-label">Semester :</label>
+						<input
+							type="number"
+							class="form-control"
+							id="sem"
+							name="sem"
+							required
+						/>
+					</div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button onclick="changeOrder()" class="btn btn-primary" form="sub-form">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let topics = JSON.parse(`<%-JSON.stringify(topics)%>`);
+  topics.forEach((ele) => {
+    ele.newOrder = ele.order;
+  });
+  function moveUp(e) {
+    let id = $(e).data("id");
+    let myIndex = 0;
+    topics.forEach((ele, index) => {
+      if (id == ele._id) {
+        myIndex = index;
+        return;
+      }
+    });
+    if (myIndex == 0) {
+      return;
+    }
+    let temp = null;
+    temp = topics[myIndex];
+    topics[myIndex] = topics[myIndex - 1];
+    topics[myIndex - 1] = temp;
+    renderDivs();
+  }
+
+  function moveDown(ele){
+    let id=$(ele).data("id");
+    let myIndex=0;
+
+    topics.forEach((ele,index)=>{
+      if(id==ele._id){
+        myIndex=index;
+        return;
+      }
+    })
+    if(myIndex>=topics.length-1){
+      return;
+    }
+    let temp=null;
+    temp=topics[myIndex];
+    topics[myIndex]=topics[myIndex+1];
+    topics[myIndex+1]=temp;
+    renderDivs()
+  }
+
+  function renderDivs() {
+    $("#topicOrders").html("");
+    let topicDivs = "";
+    topics.forEach((element, index) => {
+      element.newOrder = index + 1;
+      topicDivs += `<div class="col-2 text-center">${index + 1}</div>`;
+      topicDivs += `<div class="col-2 text-center">${element.order}</div>`;
+      topicDivs += `<div class="col-6 text-center">${element.topic}</div>`;
+      topicDivs += `<div class="col-2 text-center justify-content-around d-flex"><a data-id="${element._id}" onclick=" moveUp(this)"> <i class="fa-solid fa-angle-up"></i></a><a onclick="moveDown(this)" data-id="${element._id}" ><i class="fa-solid fa-angle-down"></i></a></div>`;
+    });
+    $("#topicOrders").html(topicDivs);
+  }
+
+  function changeOrder() {
+    $.ajax({
+      type: "POST",
+      url: "/coordinator/topicsOrder",
+      data: { topics },
+      success: function (response) {
+        if (response.success) {
+          location.reload();
+        }
+      },
+    });
+  }
+</script>

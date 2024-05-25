@@ -1,0 +1,81 @@
+<%- include('../partials/header') %> 
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+
+<div class="grid-container">
+	<!-- Header -->
+	<%- include("./adminHeader") %>
+	<!-- End Header -->
+
+	<!-- Sidebar -->
+	<%- include("./adminSidebar") %>
+	<!-- End Sidebar -->
+
+	<!-- Main -->
+	<main class="main-container">
+		<div class="main-title">
+			<div class="h1 ps-5 pe-5 dboard">Dashboard</div>
+		</div>
+		<div class="box-container ps-5 pe-5">
+			<div class="row margin">
+				<div onclick="window.open('/admin/authorities','_self')" class="col-md-3 m-1 box dashboard-tile">
+					<!-- <i class="fa-regular fa-building"></i> -->
+					<div class="dashboard-tile-header h4">Authorities</div>
+					<p class="fs-4"><%= authority_count %></p>
+						
+				</div>
+				<div class="col-md-1 extraBox"></div>
+				<div onclick="window.open('/admin/coordinators','_self')" class="col-md-3 m-1 box dashboard-tile">
+					<!-- <i class="fa-regular fa-building"></i> -->
+					<div class="dashboard-tile-header h4">Coordinators</div>
+					<p class="fs-4"><%= coordinator_count %></p>
+				</div>
+				<div class="col-md-1 extraBox"></div>
+				<div onclick="window.open('/admin/subjects','_self')" class="col-md-3 m-1 box dashboard-tile">
+					<!-- <i class="fa-regular fa-building"></i> -->
+					<div class="dashboard-tile-header h4">Subjects</div>
+					<p class="fs-4"><%= subject_count %></p>
+				</div>
+			</div>
+
+			<div class="row margin">
+				<div class="col-md-2 extraBox"></div>
+				<div onclick="window.open('/admin/workers','_self')" class="col-md-3 m-1 box">
+					<!-- <i class="fa-regular fa-building"></i> -->
+					<div class="dashboard-tile-header h4">Workers</div>
+					<p class="fs-4"><%= worker_count %></p>
+				</div>
+				<div class="col-md-1 extraBox"></div>
+				<div onclick="window.open('/admin/certificates','_self')" class="col-md-3 m-1 box">
+					<!-- <i class="fa-regular fa-building"></i> -->
+					<div class="dashboard-tile-header h4">Certificates</div>
+					<p class="fs-4"><%= certificates %></p>
+				</div>
+				
+			</div>
+		</div>
+	</main>
+	<!-- End Main -->
+</div>
+<%- include('../partials/footer') -%>
+<script>
+	const allSideMenu = document.querySelectorAll(
+		"#sidebar .side-menu.top li a"
+	);
+
+	allSideMenu.forEach((item) => {
+		const li = item.parentElement;
+
+		item.addEventListener("click", function () {
+			allSideMenu.forEach((i) => {
+				i.parentElement.classList.remove("active");
+			});
+			li.classList.add("active");
+		});
+	});
+</script>
+<script src="/scripts/addSubject.js"></script>
+
+<%- include('../partials/sweetalert') %>
+<%- include('../partials/footer2') -%>
+
+

@@ -1,0 +1,131 @@
+<html>
+
+<head>
+	<title>Chart</title>
+
+	<style>
+		.chart-container {
+			border: 1px solid #ccc;
+			padding: 10px;
+			margin: 10px;
+			background-color: #fff;
+			margin-bottom: 100px;
+		}
+	</style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+	let analysis = JSON.parse(`<%- JSON.stringify(data) %>`)
+	console.log(analysis)
+</script>
+<style>
+	* {
+		font-size: 30px !important
+	}
+
+
+	.col-6 {
+		margin: 0;
+	}
+</style>
+
+<body>
+
+	<div class="chart-container">
+		<h1>Performance</h1>
+		<div id="marks"></div>
+	</div>
+	<div class="chart-container">
+		<h1>Time Spent</h1>
+		<div id="time"></div>
+	</div>
+
+	<script>
+		function marks() {
+			var options = {
+				series: [{
+					name: "Performance",
+					data: analysis.map(ele => ((ele.marksObtained / ele.totalMarks) * 100).toFixed(2))
+				}],
+				chart: {
+					type: 'line',
+					zoom: {
+						enabled: false
+					}
+				},
+				dataLabels: {
+					enabled: true,
+					formatter:(val)=>val+"%"
+				},
+				stroke: {
+					curve: 'smooth'
+				},
+				grid: {
+					row: {
+						colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+						opacity: 0.5
+					},
+				},
+				xaxis: {
+					categories: analysis.map(ele => (new Date(ele.date).toLocaleDateString())),
+					labels: {
+						showDuplicates: true,
+						offsetY: 20,
+						offsetX: 5,
+					}
+				},
+				yaxis: {
+					min: 0, max: 100, labels: { formatter: (val) => val + "%" }
+				}
+			};
+
+			let chart = new ApexCharts(document.querySelector("#marks"), options);
+			chart.render();
+		}
+		function time() {
+			var options = {
+				series: [{
+					name: "Time Spent",
+					data: analysis.map(ele => ele.timeSpent)
+				}],
+				chart: {
+					type: 'line',
+					zoom: {
+						enabled: false
+					}
+				},
+				dataLabels: {
+					enabled: true,
+					formatter:(val)=>val+"s"
+				},
+				stroke: {
+					curve: 'smooth'
+				},
+				grid: {
+					row: {
+						colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+						opacity: 0.5
+					},
+				},
+				xaxis: {
+					categories: analysis.map(ele => (new Date(ele.date).toLocaleDateString())),
+					labels: {
+						showDuplicates: true,
+						offsetY: 20,
+						offsetX: 5,
+					}
+				},
+				yaxis: {
+					labels: { formatter: (val) => val + "s" }
+				}
+			};
+
+			let chart = new ApexCharts(document.querySelector("#time"), options);
+			chart.render();
+		}
+		marks();
+		time();
+	</script>
+</body>
+
+</html>

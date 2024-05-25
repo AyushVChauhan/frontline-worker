@@ -1,0 +1,122 @@
+<style>
+  .modaltopic {
+    display: inline-block;
+    font-size: 20px;
+  }
+</style>
+<style>
+  .ck-editor__editable_inline {
+    min-height: 200px;
+  }
+</style>
+
+<div class="modal fade modal-xl" id="topicDetailModal" tabindex="-1" aria-labelledby="topicDetailModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="topicDetailModalLabel">Worker Detail</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="question">
+          <div class="modaltopic me-2">
+            <h4><b>Name :</b></h4>
+          </div>
+
+          <div class="modaltopic" id="subjectModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question">
+          <div class="modaltopic me-2">
+            <h4><b>Email :</b></h4>
+          </div>
+          <div class="modaltopic" id="moduleModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question">
+          <div class="modaltopic me-2">
+            <h4><b>Aadhar Number :</b></h4>
+          </div>
+          <div class="modaltopic" id="topicModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question">
+          <div class="modaltopic me-2">
+            <h4><b>Number of Certificates :</b></h4>
+          </div>
+          <div class="modaltopic" id="contentModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="">
+          <div class="modalQuestion me-2">
+            <h4 class="modal-title"><b>Enrolled Subjects :</b></h4>
+          </div>
+          <div class="modaltopic" id="linksModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question ">
+          <div class="modaltopic me-2 ">
+            <h4><b>Contact No :</b></h4>
+          </div>
+          <div class="modaltopic " id="resourcesModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question ">
+          <div class="modaltopic me-2 ">
+            <h4><b>Custom Message :</b></h4>
+          </div>
+          <div class="modaltopic" id="editor">
+          </div>
+        </div>
+        <div class="question ">
+          <button type="button" class="btn btn-primary" onclick="sendMessage()">
+            SEND
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function sendMessage() {
+    let username = $("#subjectModal").html();
+    let email = $("#moduleModal").html();
+    let message = editor.getData();
+    $.ajax({
+      type: "POST",
+      url: "/authority/sendMail",
+      data: { email, message },
+      success: function (res) {
+        Swal.fire({
+          title: "Mail Sent!",
+          text: `The mail was sent successfully to ${username}`,
+          icon: "success"
+        });
+      },
+    });
+    console.log();
+  }
+  var editor;
+  ClassicEditor.create(document.querySelector("#editor"))
+    .then((newEditor) => {
+      editor = newEditor;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  $(document).ready(() => {
+  })
+</script>

@@ -1,0 +1,194 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<div class="grid-container">
+    <%- include("./coordinatorHeader") %> <%- include("./coordinatorSidebar") %>
+
+    <div class="main-container">
+        <div class="row ps-5 pe-5 align-items-center d-flex">
+            <div class="col h1">Topics</div>
+
+            <div class="col d-flex justify-content-evenly text-end">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#topicOrderModal"
+                >
+                    <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;CHANGE
+                    ORDER
+                </button>
+                <a href="/coordinator/addTopic/<%= moduleId %>">
+                    <button
+                        style="border-radius: 900px; height: min-content"
+                        class="btn btn-primary"
+                    >
+                        <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+                        TOPIC
+                    </button></a
+                >
+            </div>
+        </div>
+        <table
+            class="uk-table uk-table-hover uk-table-striped text-center"
+            id="datatable"
+        >
+            <thead>
+                <th class="text-center">Sr no.</th>
+                <th class="text-center">Module</th>
+                <th class="text-center">Topic</th>
+                <th class="text-center">Actions</th>
+            </thead>
+            <tbody>
+                <% for( let index=0; index < topics.length; index++ ) { %>
+                <tr>
+                    <% let element=topics[index] %>
+                    <td><%= index+1 %></td>
+                    <td><%= element.moduleId.moduleName %></td>
+                    <td><%= element.topic %></td>
+                    <td>
+                        <div class="d-flex flex-row justify-content-evenly">
+                            <a
+                                data-id="<%= element._id %>"
+                                onclick="topicDetail(this)"
+                                class="adder"
+                            >
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a
+                                data-id="<%= element._id %>"
+                                onclick="discussion(this)"
+                                class="adder"
+                            >
+                                <i class="fa-solid fa-comments text-warning"></i>
+                            </a>
+                            <a
+                                href="/coordinator/topics/edit/<%= element._id %>"
+                                class="adder"
+                                ><i class="fa-solid fa-edit text-dark"></i
+                            ></a>
+                        </div>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+        <div class="" id="chart"></div>
+    </div>
+</div>
+
+<%- include('../partials/footer') -%> <%- include("topicDetail") -%> <%-
+include('./topicOrder') -%>
+<%-
+include('./discussionModal') -%>
+
+<script>
+    $(document).ready(() => {
+        console.log("hello");
+        var myTable;
+
+        myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            language: {
+                paginate: {
+                    previous: "<",
+                    next: ">",
+                },
+            },
+            columnDefs: [
+                // Center align the header content of column 1
+                { className: "dt-head-center", targets: [0, 1] },
+            ],
+        });
+    });
+
+    function topicDetail(e) {
+        let id = e.getAttribute("data-id");
+        $.ajax({
+            type: "POST",
+            url: "/coordinator/topicDetail",
+            data: { id },
+            success: function (response) {
+                console.log(response);
+                $("#subjectModal").html(
+                    response.topicDetail.moduleId.subjectId.name
+                );
+                $("#moduleModal").html(
+                    response.topicDetail.moduleId.moduleName
+                );
+                $("#topicModal").html(response.topicDetail.topic);
+                $("#contentModal").html(response.topicDetail.content);
+                let links = "";
+                response.topicDetail.links.forEach((ele, ind) => {
+                    links += `<li class=""><a target='_blank' href='${ele}'>Link ${
+                        ind + 1
+                    }</a></li>`;
+                });
+                $("#linksModal").html(links);
+                let resources = "";
+                response.topicDetail.resources.forEach((ele, ind) => {
+                    resources += `<a target='_blank' href='/${ele.path}'>${ele.name}</a><br>`;
+                });
+                $("#resourcesModal").html(resources);
+                $("#topicDetailModal").modal("show");
+            },
+        });
+    }
+
+    function renderChart() {
+        let chartData = JSON.parse(`<%- JSON.stringify(topicAnalysis) %>`)
+        console.log(chartData)
+        var options = {
+            series: [
+                {
+                    data: chartData.map(ele=>ele.viewed),
+                    name:"Viewed"
+                },
+                {
+                    data: chartData.map(ele=>ele.bookmarked),
+                    name:"Bookmarked"
+                },
+            ],
+            chart: {
+                type: "bar",
+                height: chartData.length * 150 > 400 ? chartData.length * 150 : 400,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: true,
+                    dataLabels: {
+                        position: "top",
+                    },
+                },
+            },
+            dataLabels: {
+                enabled: true,
+                offsetX: -6,
+                style: {
+                    fontSize: "12px",
+                    colors: ["#fff"],
+                },
+            },
+            stroke: {
+                show: true,
+                width: 1,
+                colors: ["#fff"],
+            },
+            tooltip: {
+                shared: true,
+                intersect: false,
+            },
+            xaxis: {
+                categories: chartData.map(ele=>ele.topic),
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    }
+    renderChart();
+</script>
+
+<%- include('../partials/footer2') -%>

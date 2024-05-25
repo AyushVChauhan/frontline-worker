@@ -1,0 +1,201 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<%- include('../partials/footer') -%>
+<div class="grid-container">
+    <!-- Header -->
+
+    <%- include("./coordinatorHeader") %>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <%- include("./coordinatorSidebar") %>
+    <!-- End Sidebar -->
+
+    <style>
+        .disqualified-reason {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f8d7da; 
+        }
+
+        .disqualified-reason h1, .disqualified-reason .reason{
+            color: #721c24;
+        }
+
+
+        .disqualified-reason img {
+            max-width: 10%;
+            height: auto;
+            margin-left: 10px;
+        }
+    </style>
+
+    <!-- Main -->
+    <main class="main-container">
+        <div class="main-title">
+            <div class="h1 pe-5 dboard"><%= details.quizId.name %></div>
+        </div>
+        <div class="accordion" id="questions">
+            <% details.questions_answers.forEach((element,index) => { %>
+            <div class="accordion-item ">
+                <h2 class="accordion-header">
+                    <button
+                        class="accordion-button collapsed "
+                        type="button"
+                        data-bs-toggle="collapse"
+                      
+                        data-bs-target="#<%= element.question._id %>"
+                        aria-expanded="false"
+                        aria-controls="<%= element.question._id %>"
+                        
+                    >
+                    <div class="row">
+                        <div class="col-auto">
+                            <%= index + 1 %>).
+                            <%- (element.marks == 0 ? ((element.question.answer == element.answer) ? '&nbsp;&nbsp;&#x2714;' : '&nbsp;&nbsp;&#x274C') : '&nbsp;&nbsp;&#x2714;') %>
+                        </div>
+                        <div class="col-auto <%- (element.marks == 0 ? ((element.question.answer == element.answer) ? 'text-success' : 'text-danger') : 'text-success') %>">
+                            <%- element.question.question %>
+                        </div>
+                    </div>
+                    </button>
+                </h2>
+                <div
+                    id="<%= element.question._id %>"
+                    class="accordion-collapse collapse"
+                    data-bs-parent="#questions"
+                >
+                    <div class="accordion-body">
+                        <div class="row">
+                            <div class="col-10" style="line-break: anywhere;">
+                                Selected Answer: <%= element.answer %>
+                            </div>
+                            <div class="col-2 text-end">
+                                Marks: <%= element.question.marks %>
+                            </div>
+                            <div class="col-9 mt-2">
+                                Correct Answer: <%= element.question.answer %>
+                            </div>
+                            <div class="col-3 text-end mt-2">
+                                Obtained Marks: <%= (element.marks == 0 ? ((element.question.answer == element.answer) ? element.question.marks : 0) : element.marks) %>
+                               
+                            </div>
+                            <% let dif="" %>
+                            <% if (element.question.difficulty==1) { %>
+                                <% dif="Easy" %>
+                            <% } %>
+                            <% if (element.question.difficulty==2) { %>
+                                <% dif="Medium" %>
+                            <% } %>
+                            <% if (element.question.difficulty==3) { %>
+                                <% dif="Hard" %>
+                            <% } %>
+                            <div class="col-8 mt-2" style="line-break: anywhere;">
+                                Difficulty: <%= dif %><br>
+                                Module: <%= element.question.topicId[0].moduleId.moduleName %>
+                            </div>
+                            <div class="col-4 text-end mt-2">
+                                Time Spent: <%= element.time_spent %> Seconds<br>
+                                Time Expected: <%= element.question.time_required %> Seconds
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+        
+        <% if (details.status == 2) { %>
+        <div class="disqualified-reason">
+            <h1>Disqualified Reason</h1>
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button reason" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      NO FACE DETECTED
+                    </button>
+                  </h2>
+                  <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <% details.remarks.forEach(element => { %>
+                            <% if (element.reason == 0) { %>
+                                <img src="http://localhost:3000/files/workers/<%=element.file%>" alt="" srcset="">
+                            <% } %>
+                        <% }) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button reason collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        DIFFERENT FACE DETECTED
+                    </button>
+                  </h2>
+                  <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <% details.remarks.forEach(element => { %>
+                            <% if (element.reason == 1) { %>
+                                <img src="http://localhost:3000/files/workers/<%=element.file%>" alt="" srcset="">
+                            <% } %>
+                        <% }) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button reason collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        MULTIPLE FACES DETECTED
+                    </button>
+                  </h2>
+                  <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <% details.remarks.forEach(element => { %>
+                            <% if (element.reason == 2) { %>
+                                <img src="http://localhost:3000/files/workers/<%=element.file%>" alt="" srcset="">
+                            <% } %>
+                        <% }) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button reason collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        APPLICATION SWITCHED
+                    </button>
+                  </h2>
+                  <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <% let i = 0; %>
+                        <% details.remarks.forEach(element => { %>
+                            <% if (element.reason == 3) { %>
+                                <% i++ %>
+                            <% } %>
+                        <% }) %>
+                        <%= i %>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+
+        <h3>Custom Message:</h3>
+        <div id="editor"></div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<button onclick="reject(this)" data-id="<%=details._id%>" class="btn-lg btn btn-primary rounded-pill p-2">Reject</button>
+				<button onclick="approve(this)" data-id="<%=details._id%>" class="btn-lg btn btn-primary rounded-pill p-2">Approve</button>
+			</div>
+		</div>
+    </main>
+    <!-- End Main -->
+</div>
+<script src="/scripts/approve.js">
+</script>
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+<script src="/scripts/coordinatorSidebar.js"></script>
+
+<%- include('../partials/footer2') -%>

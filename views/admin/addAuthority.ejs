@@ -1,0 +1,93 @@
+<div
+	class="modal fade"
+	id="authorityModel"
+	tabindex="-1"
+	aria-labelledby="authorityModelLabel"
+	aria-hidden="true"
+>
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="authorityModelLabel">ADD AUTHORITY</h5>
+				<input type="hidden" value="" />
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+			<form action="/admin/addAuthority" method="POST">
+				<div class="modal-body">
+					<div class="mb-3">
+						<label for="uname" class="form-label">Username</label>
+						<input
+						  type="text"
+						  name="username"
+						  class="form-control"
+						  id="uname"
+						  aria-describedby="emailHelp"
+						/>
+					  </div>
+					  <div class="mb-3">
+						<label for="fname" class="form-label">Name</label>
+						<input
+						  type="text"
+						  name="name"
+						  class="form-control"
+						  id="fname"
+						  aria-describedby="emailHelp"
+						/>
+					  </div>
+				
+					  <div class="mb-3">
+						<select class="form-select" name="districtId">
+						  <option selected>Select District</option>
+						  <% authorityData.forEach(element => { %>
+						   <option value="<%= element._id %>"><%= element.name %></option>
+						  <% }) %>
+						</select>
+					  </div>
+				
+					  <div class="mb-3">
+						<label for="email" class="form-label">Email</label>
+						<input
+						  type="email"
+						  name="email"
+						  class="form-control"
+						  id="email"
+						  aria-describedby="emailHelp"
+						/>
+					  </div>
+					  
+					  <div class="mb-3">
+						<label for="contact" class="form-label">Mobile Number</label>
+						<input
+						  type="text"
+						  name="phone"
+						  class="form-control"
+						  id="contact"
+						  aria-describedby="emailHelp"
+						/>
+					  </div>
+					  				
+				</div>
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+					<button
+						type="submit"
+						class="btn btn-primary"
+					>
+						Save changes
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,76 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<script>
+    let groups = JSON.parse(`<%- JSON.stringify(group_data) %>`);
+</script>
+<div class="grid-container">
+    <%- include("./adminHeader") %> <%- include("./adminSidebar") %>
+
+    <div class="main-container">
+        <div class="row ps-5 pe-5 align-items-center d-flex">
+            <div class="col h1">Groups</div>
+            <div class="col text-end">
+                <button
+                    style="border-radius: 900px; height: min-content"
+                    class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#groupModal"
+                >
+                    <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+                    STUDENT GROUP
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-3" id="tableDiv" style="overflow: hidden"></div>
+    </div>
+</div>
+<%- include("./addGroup") %> <%- include("./viewGroup") %> <%- include('../partials/footer') -%>
+
+<script>
+    function see(e) {
+        let group = e.getAttribute("data-id");
+        $("#viewGroupModal").modal("show");
+        $.ajax({
+            type: "post",
+            url: "/admin/viewGroup",
+            data: { group },
+            success: function (response) {
+                let enrolls = "<ul class='list-group'>";
+                response.forEach((ele) => {
+                    enrolls += `<li class="list-group-item">${ele.enrollment}</li>`;
+                });
+                enrolls += "</ul>";
+                $("#viewGroupModalBody").html(enrolls);
+            },
+        });
+    }
+	$(document).ready(()=>{
+		let def =
+            "<table class='uk-table uk-table-hover uk-table-striped text-center' id='datatable'><thead><th>Sr No.</th><th>Name</th><th>Actions</th></thead>";
+        let data = "";
+
+        groups.forEach((ele, ind) => {
+            data += "<tr>";
+            data += `<td>${ind + 1}</td>`;
+            data += `<td>${ele.name}</td>`;
+            data += `<td><a data-id='${ele._id}' onclick='see(this)' class='see' ><i class='fa-solid fa-eye'></i></a></td>`;
+            data += "</tr>";
+        });
+        $("#tableDiv").html(def + data + "</table>");
+        var myTable;
+
+        myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            language: {
+                paginate: {
+                    previous: "<",
+                    next: ">",
+                },
+            },
+        });
+	})
+</script>
+
+<%- include('../partials/sweetalert') %> <%- include('../partials/footer2') -%>

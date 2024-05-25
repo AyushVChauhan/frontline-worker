@@ -1,0 +1,94 @@
+.uk-table-hover tbody tr:hover,
+.uk-table-hover > tr:hover {
+	background: #C3ACD0;
+	background-color: #C3ACD0;
+	background-position-x: 0%;
+	background-position-y: 0%;
+	background-repeat: repeat;
+	background-attachment: scroll;
+	background-image: none;
+	background-size: auto;
+	background-origin: padding-box;
+	background-clip: border-box;
+}
+
+
+table.dataTable thead {
+	background-color: #35013F;
+}
+table.dataTable thead th {
+	color: #fff;
+	font-weight: 500;
+	font-family: "Nunito", sans-serif;
+	font-size: 15px;
+	text-align: center;
+}
+#datatable_wrapper {
+	margin: 50px;
+}
+#datatable {
+	margin-top: 15px;
+	overflow: hidden;
+	border-radius: 15px;
+}
+#datatable1_wrapper {
+	margin: 50px;
+}
+#datatable1 {
+	margin-top: 15px;
+	overflow: hidden;
+	border-radius: 15px;
+}
+table.dataTable tr.even {
+	background-color: #d3cedf;
+}
+table.dataTable tr.odd {
+	background-color: #d3cedf;
+}
+table.dataTable tr.even:hover {
+	background-color: #C3ACD0;
+}
+table.dataTable tr.odd:hover {
+	background-color: #C3ACD0;
+}
+
+table.dataTable tr {
+	color: #000;
+}
+
+.paginate_button.next {
+	margin-left: 20px;
+}
+.paginate_button.previous {
+	margin-right: 20px;
+}
+.cdatatableDetails {
+	margin-top: 4px;
+}
+.page-link {
+	text-decoration: none;
+}
+.page-link:hover {
+	text-decoration: none;
+}
+.sorting {
+	text-align: center;
+}
+.dt-head-center {
+	text-align: center;
+}
+table.dataTable thead .sorting::before {
+	/* right: 22px !important; */
+	margin-right: 4px;
+	margin-right: -4px;
+	/* margin-top: ; */
+	content: "\2303" !important;
+	/* top: 31px; */
+}
+table.dataTable thead .sorting::after {
+	/* right: 22px !important; */
+	margin-top: -5px;
+	margin-right: -4px;
+	content: "\2304" !important;
+	/* top: 31px; */
+}

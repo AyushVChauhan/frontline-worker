@@ -1,0 +1,54 @@
+<div class="modal fade" id="coordinatorModal" tabindex="-1" aria-labelledby="coordinatorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="coordinatorModalLabel">ADD COORDINATOR</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/admin/addCoordinator" method="POST" id="coordinatorForm">
+          <div class="mb-3">
+            <label for="uname" class="form-label">Username</label>
+            <input type="text" name="username" class="form-control" id="uname" aria-describedby="emailHelp" />
+          </div>
+          <div class="mb-3">
+            <label for="fname" class="form-label">Name</label>
+            <input type="text" name="name" class="form-control" id="fname" aria-describedby="emailHelp" />
+          </div>
+          <div class="mb-3">
+            <select multiple class="form-select" name="subjectIds" size="5">
+              <option selected>Select Subjects</option>
+              <% sub_data.forEach(element=> { %>
+                <option value="<%= element._id %>">
+                  <%= element.name %>
+                </option>
+                <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="contact" class="form-label">Contact</label>
+            <input type="" name="phone" class="form-control" id="contact" aria-describedby="emailHelp" />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" id="email" aria-describedby="emailHelp" />
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" name="password" class="form-control" id="password" />
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer ">
+        <div class="text-center">
+          <button onclick="document.getElementById('coordinatorForm').submit()" type="button" class="btn btn-primary mb-3 ">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

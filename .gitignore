@@ -1,0 +1,5 @@
+node_modules
+ClientApp/globals.js
+.env
+public/files/workers/*.jpeg
+package-lock.json

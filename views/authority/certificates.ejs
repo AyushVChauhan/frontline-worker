@@ -1,0 +1,63 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<div class="grid-container">
+    <%- include("./authorityHeader") %> <%- include("./authoritySidebar") %>
+
+    <div class="main-container">
+        <div class="row ps-5 pe-5 align-items-center d-flex">
+            <div class="col h1">Certificates</div>
+            
+        </div>
+
+        <div class="mb-3" id="tableDiv" style="overflow: hidden">
+            <table
+                class="uk-table uk-table-hover uk-table-striped text-center"
+                id="datatable"
+            >
+                <thead>
+                    <th>Sr No.</th>
+                    <th>Type</th>
+                    <th>Worker Name</th>
+                    <th>Subject</th>
+                    <th>QuizName</th>
+                    <th>Date Of Quiz</th>
+                    <th>Date of Approval</th>
+					<th>View</th>
+                </thead>
+                <tbody>
+                    <% myCertificates.forEach((element,index)=> { %>
+                    <tr>
+                        <td><%= index+1 %></td>
+                        <td><%= element.type == 1 ? "FINAL" : "TRAINING" %></td>
+                        <td><%= element.workerId.name %></td>
+                        <td><%= element.subjectId.name %></td>
+                        <td><%= element.sessionId.quizId.name %></td>
+                        <td><%- new Date(element.sessionId.end_time).toLocaleDateString()  %></td>
+                        <td><%- new Date(element.createdAt).toLocaleDateString()  %></td>
+						<td><a href="http://localhost:3000/files/workers/certificates/<%=element._id%>.pdf" targer="_blank"><i class="fa-solid fa-file text-success"></i></a></td>
+                    </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include('../partials/footer') -%>
+<script>
+    $(document).ready(() => {
+        myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            scrollCollapse: true,
+
+            language: {
+                paginate: {
+                    previous: "<",
+                    next: ">",
+                },
+            },
+        });
+    });
+</script>
+
+<%- include('../partials/footer2') -%>

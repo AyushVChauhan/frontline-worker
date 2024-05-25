@@ -1,0 +1,323 @@
+<style>
+    .profilePicture {
+        height: 50px;
+        width: 50px;
+        border-radius: 1000px;
+        overflow: hidden;
+    }
+
+    .profilePictureSmall {
+        height: 40px;
+        width: 40px;
+        border-radius: 1000px;
+        overflow: hidden;
+    }
+
+    .profileName {
+        font-weight: bold;
+        color: black;
+        font-size: large;
+    }
+
+    .timeHistory {
+        color: gray;
+    }
+</style>
+<div
+    class="modal fade"
+    id="discussionModal"
+    tabindex="-1"
+    aria-labelledby="discussionLabel"
+    aria-hidden="true"
+>
+    <div
+        class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+    >
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="discussionLabel">
+                    Discussion
+                </h1>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body" id="discussion">
+                <div class="row">
+                    <div class="col-1">
+                        <div class="profilePicture">
+                            <img src="https://picsum.photos/200" alt="" />
+                        </div>
+                    </div>
+                    <div class="col-11">
+                        <div class="row">
+                            <div class="col-auto profileName">
+                                Ayush Chauhan
+                            </div>
+                            <div class="col-auto timeHistory">
+                                <%- (new Date()).toLocaleString() %>
+                            </div>
+                            <div class="col-12">
+                                Lorem ipsum dolor, sit amet consectetur
+                                adipisicing elit. Laborum eaque inventore nobis,
+                                tempora quaerat ducimus pariatur ab adipisci ex
+                                quo vitae accusantium, odio velit quam. Repellat
+                                vel veniam animi rerum!
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button
+                                    data-id="1234"
+                                    class="btn btn-outline-dark rounded-pill me-5 border-0"
+                                    onclick="showReplies(this)"
+                                >
+                                    <i class="fa-solid fa-caret-up"></i> 6
+                                    Replies</button
+                                ><button
+                                    data-id="1234"
+                                    class="btn bg-transparent rounded-pill border-0"
+                                    onclick="showReply(this)"
+                                >
+                                    <i class="fa-solid fa-reply text-dark"></i>
+                                    Reply
+                                </button>
+                            </div>
+                            <!-- comment Id -->
+                            <div class="col-12">
+                                <div
+                                    id="1234reply"
+                                    class="row mt-4"
+                                    style="display: none"
+                                >
+                                    <div class="col-10">
+                                        <textarea
+                                            type="text"
+                                            class="form-control border border-dark rounded-3 p-2"
+                                            placeholder="Write a Reply"
+                                        ></textarea>
+                                    </div>
+                                    <div class="col-2">
+                                        <button
+                                            data-id="1234"
+                                            class="btn btn-primary rounded-pill me-5"
+                                        >
+                                            Reply
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="1234replies" style="display: none">
+                                    <div class="row mt-4">
+                                        <div class="col-auto">
+                                            <div class="profilePictureSmall">
+                                                <img
+                                                    src="https://picsum.photos/200"
+                                                    alt=""
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="col-11">
+                                            <div class="row">
+                                                <div class="col-auto">
+                                                    Ayush Chauhan
+                                                </div>
+                                                <div class="col-auto">
+                                                    <%- (new
+                                                    Date()).toLocaleString() %>
+                                                </div>
+                                                <div class="col-12">
+                                                    Lorem ipsum dolor, sit amet
+                                                    consectetur adipisicing
+                                                    elit. Laborum eaque
+                                                    inventore nobis, tempora
+                                                    quaerat ducimus pariatur ab
+                                                    adipisci ex quo vitae
+                                                    accusantium, odio velit
+                                                    quam. Repellat vel veniam
+                                                    animi rerum!
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col-auto">
+                                            <div class="profilePictureSmall">
+                                                <img
+                                                    src="https://picsum.photos/200"
+                                                    alt=""
+                                                />
+                                            </div>
+                                        </div>
+                                        <div class="col-11">
+                                            <div class="row">
+                                                <div class="col-auto">
+                                                    Ayush Chauhan
+                                                </div>
+                                                <div class="col-auto">
+                                                    <%- (new
+                                                    Date()).toLocaleString() %>
+                                                </div>
+                                                <div class="col-12">
+                                                    Lorem ipsum dolor, sit amet
+                                                    consectetur adipisicing
+                                                    elit. Laborum eaque
+                                                    inventore nobis, tempora
+                                                    quaerat ducimus pariatur ab
+                                                    adipisci ex quo vitae
+                                                    accusantium, odio velit
+                                                    quam. Repellat vel veniam
+                                                    animi rerum!
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height: 2px" class="bg-dark mt-4 mb-4"></div>
+                    <div class="row">
+                        <div class="col-1">
+                            <div class="profilePicture">
+                                <img src="https://picsum.photos/200" alt="" />
+                            </div>
+                        </div>
+                        <div class="col-11">
+                            <div class="row">
+                                <div class="col-auto">Ayush Chauhan</div>
+                                <div class="col-auto">
+                                    <%- (new Date()).toLocaleString() %>
+                                </div>
+                                <div class="col-12">
+                                    Lorem ipsum dolor, sit amet consectetur
+                                    adipisicing elit. Laborum eaque inventore
+                                    nobis, tempora quaerat ducimus pariatur ab
+                                    adipisci ex quo vitae accusantium, odio
+                                    velit quam. Repellat vel veniam animi rerum!
+                                </div>
+                                <div class="col-12">
+                                    <button
+                                        class="btn btn-outline-primary rounded-pill me-5"
+                                    >
+                                        <i class="fa-solid fa-caret-up"></i> 6
+                                        Replies</button
+                                    ><button
+                                        class="btn bg-transparent rounded-pill border border-dark"
+                                    >
+                                        <i
+                                            class="fa-solid fa-reply text-dark"
+                                        ></i>
+                                        Reply
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function discussion(e) {
+            let topicId = $(e).data("id");
+            var html = "";
+            $.ajax({
+                type: "post",
+                url: "/coordinator/getComments",
+                data: { topicId },
+                success: function (response) {
+                    response.comments.forEach((comment) => {
+                        html += `<div class="row"><div class="col-1"><div class="profilePicture">`;
+                        html += `<img src="/files/workers/${comment.workerId.photo}" alt="" />`;
+                        html += `</div></div>`;
+                        html += `<div class="col-11"><div class="row"><div class="col-auto profileName">`;
+                        html += comment.workerId.username;
+                        html += `</div><div class="col-auto timeHistory">`;
+                        html += new Date(comment.createdAt).toLocaleString();
+                        html += `</div><div class="col-12 text-dark">`;
+                        html += comment.content;
+                        html += `</div><div class="col-12 mt-2">`;
+                        if (comment.replies.length > 0) {
+                            html += `<button data-id="${comment._id}" class="btn btn-outline-dark rounded-pill me-5 border-0" onclick="showReplies(this)">`;
+                            html += `<i id="${comment._id}caret" class="fa-solid fa-caret-down"></i> `;
+                            html += comment.replies.length;
+                            html += ` Replies</button>`;
+                        }
+                        html += `<button data-id="${comment._id}" class="btn bg-transparent rounded-pill border-0" onclick="showReply(this)"><i class="fa-solid fa-reply text-dark"></i> Reply</button>`;
+                        html += `</div>`;
+                        html += `<div class="col-12">`;
+                        html += `<div id="${comment._id}reply" class="row mt-4" style="display: none;">`;
+                        html += `<div class="col-10"><textarea id="${comment._id}text" type="text" class="form-control border border-dark rounded-3 p-2" placeholder="Write a Reply"></textarea></div>`;
+                        html += `<div class="col-2"><button data-id="${comment._id}" onclick="sendReply(this)" class="btn btn-primary rounded-pill me-5">Reply</button></div></div>`;
+                        html += `<div id="${comment._id}replies" style="display: none;">`;
+                        comment.replies.forEach((reply) => {
+                            let photo = null;
+                            let username = null;
+                            if (reply.workerId) {
+                                photo = reply.workerId.photo;
+                                username = reply.workerId.username;
+                            } else {
+                                photo = "icon.png";
+                                username = reply.administrationId.username;
+                            }
+                            html += `<div class="row mt-4" ><div class="col-auto"><div class="profilePictureSmall">`;
+                            html += `<img src="/files/workers/${photo}" alt="" />`;
+                            html += `</div></div>`;
+                            html += `<div class="col-11"><div class="row"><div class="col-auto text-dark" style="font-weight:bold">`;
+                            html += username;
+                            html += `</div>`;
+                            html += `<div class="col-auto text-secondary">`;
+                            html += new Date(reply.createdAt).toLocaleString();
+                            html += `</div>`;
+                            html += `<div class="col-12 text-dark">`;
+                            html += reply.content;
+                            html += `</div></div></div></div>`;
+                        });
+                        html += `</div></div></div></div></div>`;
+                        html += `<div style="height: 1px;background-color:#e5e9f0;" class="mt-4 mb-4"></div>`;
+                    });
+                    $("#discussion").html(html);
+                    $("#discussionModal").modal("show");
+                },
+            });
+        }
+        function showReply(e) {
+            let commentId = $(e).data("id");
+            $(`#${commentId}reply`).toggle();
+        }
+        function showReplies(e) {
+            let commentId = $(e).data("id");
+            $(`#${commentId}replies`).toggle();
+            if ($(`#${commentId}caret`).hasClass("fa-caret-up")) {
+                $(`#${commentId}caret`).removeClass("fa-caret-up");
+                $(`#${commentId}caret`).addClass("fa-caret-down");
+            } else {
+                $(`#${commentId}caret`).removeClass("fa-caret-down");
+                $(`#${commentId}caret`).addClass("fa-caret-up");
+            }
+        }
+		function sendReply(e){
+            let commentId = $(e).data("id");
+			let message = $(`#${commentId}text`).val();
+			$.ajax({
+				type: "post",
+				url: "/coordinator/replyComment",
+				data: {commentId,message},
+				success: function (response) {
+					Swal.fire("Reply Given","Reply Given Successfully","success");
+                    $("#discussionModal").modal("hide");
+				}
+			});
+		}
+    </script>
+</div>

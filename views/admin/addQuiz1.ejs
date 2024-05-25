@@ -1,0 +1,106 @@
+<%- include('../partials/header') -%>
+
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<%- include('../partials/footer') -%>
+
+<div class="grid-container">
+  <!-- Header -->
+  <%- include("./adminHeader") %>
+  <!-- End Header -->
+
+  <!-- Sidebar -->
+  <%- include("./adminSidebar") %>
+
+  <!-- End Sidebar -->
+  <script src="/scripts/addQuiz1Admin.js"></script>
+  <div class="main-container" id="main" name="main">
+    <div class="row">
+      <div class="col-6">
+        <div class="mb-3 h1">Create Quiz</div>
+      </div>
+      <div class="col-6"></div>
+    </div>
+    <div class="row">
+      <div class="col-6">
+        <div class="mb-3" id="qname">
+          <label for="quizname" class="form-label">Quiz Name </label>
+          <input
+            type="text"
+            class="form-control"
+            id="quizname"
+            name="quizname"
+            placeholder="Quiz name"
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="duration" class="form-label">Duration of Quiz </label>
+          <input
+            type="number"
+            class="form-control"
+            id="duration"
+            name="duration"
+            placeholder="In minutes"
+            required
+          />
+        </div>
+
+        <div>
+          <button type="reset" class="btn btn-secondary">Reset</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="nextButton"
+            onclick="nextPage()"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="mb-2">
+          <span>Total Marks : <span id="total"></span> </span>
+        </div>
+
+        <div class="mb-3 markcount">
+          <div class="input-group" id="inputGroup1">
+            <input
+              class="form-control mb-3 temp"
+              type="number"
+              name="mark1"
+              id="mark1"
+              placeholder="Marks"
+              oninput="disableAdd()"
+            />
+            <input
+              type="number"
+              class="form-control mb-3 temp"
+              id="count1"
+              name="count1"
+              placeholder="No. of Questions"
+              oninput="disableAdd()"
+            />
+          </div>
+        </div>
+        <button
+          style="background-color: #35013F"
+          id="rowAdder"
+          type="button"
+          class="btn btn-primary mb-3"
+          onclick="add()"
+        >
+          ADD
+        </button>
+        <button
+          id="rowRemover"
+          type="button"
+          class="btn btn-danger mb-3"
+          onclick="remove()"
+        >
+          REMOVE
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

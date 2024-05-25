@@ -1,0 +1,69 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<div class="grid-container">
+	<%- include("./coordinatorHeader") %> <%- include("./coordinatorSidebar") %>
+
+	<div class="main-container">
+		<div class="row ps-5 pe-5 align-items-center d-flex">
+			<div class="col h1">
+				Students
+			</div>
+			<!-- <div class="col text-end">
+				<button
+					style="border-radius: 900px; height: min-content"
+					class="btn btn-primary"
+					data-bs-toggle="modal"
+					data-bs-target="#studentModal"
+					><i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+					STUDENTS
+				</button>
+			</div> -->
+		</div>
+		<table
+			class="uk-table uk-table-hover uk-table-striped text-center"
+			id="datatable"
+		>
+			<thead>
+				<th class="text-center">Sr no.</th>
+                <th class="text-center">Username</th>	
+                <th class="text-center">Subject</th>
+                <th class="text-center">District</th>
+                <th class="text-center">Email</th>
+			</thead>
+			<tbody>
+				<% for( let index = 0; index < worker_data.length; index++ ) { %>
+				<tr>
+					<td><%= index+1 %></td>
+					<td><%= worker_data[index].username %></td>
+					<td><%= worker_data[index].subject %></td>
+                    <td><%= worker_data[index].districtId.name %></td>
+                    <td><%= worker_data[index].email %></td>
+				</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+<%- include('../partials/footer') -%>
+<script>
+	$(document).ready(() => {
+		console.log("hello");
+		var myTable;
+
+		myTable = $("#datatable").DataTable({
+			pagingType: "simple_numbers",
+			language: {
+				paginate: {
+					previous: "<",
+					next: ">",
+				},
+			},
+			columnDefs: [
+				// Center align the header content of column 1
+				{ className: "dt-head-center", targets: [0, 1] },
+			],
+		});
+	});
+</script>
+<%- include('../partials/sweetalert') %> <%- include('../partials/footer2') -%>

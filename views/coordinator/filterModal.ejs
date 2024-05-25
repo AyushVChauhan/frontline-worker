@@ -1,0 +1,216 @@
+<style>
+    span.select2.select2-container.select2-container--default {
+        width: 100% !important;
+        margin-top: 2px;
+    }
+</style>
+<div
+    class="modal fade modal-xl"
+    id="filterModal"
+    tabindex="-1"
+    aria-labelledby="filterModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">FILTERS</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-4 mb-4">
+                        <label>Type</label>
+                        <select
+                            class="form-control"
+                            id="typeselect"
+                            name="typeselect"
+                        >
+                            <option selected="" value="All">All</option>
+                            <option value="1">MCQ</option>
+                            <option value="2">ONE WORD</option>
+                            <option value="3">DESCRIPTIVE</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4 mb-4">
+                        <label>Difficulty Level</label>
+                        <select
+                            class="form-control"
+                            name="difficultyselect"
+                            id="difficultyselect"
+                        >
+                            <option value="All" selected="">All</option>
+                            <option value="1">Easy</option>
+                            <option value="2">Medium</option>
+                            <option value="3">Hard</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 mb-4">
+                        <label>Created By</label>
+                        <select
+                            class="form-control"
+                            name="createdbyselect"
+                            id="createdbyselect"
+                        >
+                            <option value="All" selected="">All</option>
+                            <option value="1">By me</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 mb-4">
+                        <label>Modules</label>
+                        <select
+                            class="form-control"
+                            name="moduleselect"
+                            id="moduleselect"
+                            onchange="coChange(this)"
+                        >
+                            <option value="All" selected="">All</option>
+
+                            <% for( let index = 0; index < modules; index++ ) { %>
+
+                            <option value="<%= moduleData[index]._id %>">
+                                <%= moduleData[index].moduleName %>
+                            </option>
+                            <% } %>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 mb-4">
+                        <label>Topic</label><br />
+                        <select name="topicselect[]" id="topicselect" multiple>
+                            <% topics.forEach(element => { %>
+                            <option value="<%= element._id %>">
+                                <%= element.topic %>
+                            </option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 mb-4">
+                        <label>Marks</label>
+                        <select
+                            class="form-control"
+                            name="markselect"
+                            id="markselect"
+                        >
+                            <option value="All" selected="">All</option>
+                            <% for( let index = 1; index <= 7; index++ ) { %>
+                            <option value="<%= index %>"><%= index %></option>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"></div>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+                <button
+                    type="submit"
+                    id="generateDataTable"
+                    class="btn btn-primary"
+                >
+                    Save changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let totalModules = "<%= modules %>";
+    let allTopics = JSON.parse('<%- JSON.stringify(topics) %>');
+    console.log(allTopics);
+    let availTopics = allTopics;
+    function coChange(e) {
+        let module = e.value;
+        if (module == "All") {
+            availTopics = allTopics;
+        } else {
+            availTopics = [];
+            allTopics.forEach((ele) => {
+                if (ele.moduleId._id == module) {
+                    availTopics.push(ele);
+                }
+            });
+        }
+        renderTopics();
+    }
+    function renderTopics() {
+        let html = "";
+        availTopics.forEach((ele) => {
+            html += `<option value='${ele._id}'>${ele.topic}</option>`;
+        });
+        $("#topicselect").html(html);
+        $("#topicselect").select2({
+            dropdownParent: $("#filterModal .modal-content"),
+            multiple: true,
+            sorter: addSelectAll,
+        });
+    }
+    $(document).ready(() => {
+        $("#topicselect").select2({
+            dropdownParent: $("#filterModal .modal-content"),
+            multiple: true,
+            sorter: addSelectAll,
+            placeholder: "Select Topics",
+        });
+        $("#topicselect").val(allTopics.map(ele=>ele._id)).trigger("change");
+        $("#topicselect").trigger("select2:close");
+    });
+    const addSelectAll = (matches) => {
+        if (matches.length > 0) {
+            // Insert a special "Select all matches" item at the start of the
+            // list of matched items.
+            return [
+                {
+                    id: "selectAll",
+                    text: "All",
+                    matchIds: matches.map((match) => match.id),
+                },
+                ...matches,
+            ];
+        }
+    };
+
+    const handleSelection = (event) => {
+        if ($("#topicselect").val().length == availTopics.length && event.params.data.id === "selectAll") {
+            $("#topicselect").val(null).trigger("change");
+        } else if (event.params.data.id === "selectAll") {
+            $("#topicselect").val(event.params.data.matchIds);
+            $("#topicselect").trigger("change");
+            $("#topicselect").trigger("select2:close");
+        }
+
+    };
+    $("#topicselect").on("select2:select", handleSelection);
+    $("#topicselect").on("select2:close", function () {
+        let select = $(this),
+            ul = select.next("span.select2").find("ul");
+
+        ul.find(".select2-selection__choice").remove();
+        ul.prepend(function () {
+            let count = select.select2("data").length;
+            if(count != 0)
+            {
+                return (
+                "<li class='select2-selection__choice'>" +
+                    count +
+                    " Selected&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>"
+                );
+            }
+            else {
+                return ("");
+            }
+        });
+    });
+</script>

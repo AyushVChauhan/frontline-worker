@@ -1,0 +1,172 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+<%- include('../partials/footer') -%>
+<style>
+  #datatable_wrapper {
+    margin-left: 0px;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<div class="grid-container">
+  <!-- Header -->
+  <%- include("./adminHeader") %>
+  <!-- End Header -->
+
+  <!-- Sidebar -->
+  <%- include("./adminSidebar") %>
+  <!-- End Sidebar -->
+
+  <!-- Main -->
+  <main class="main-container">
+    <div class="row ps-5 pe-5 align-items-center d-flex">
+      <div class="col h1">Leaderboard</div>
+      <div class="col text-end" style="width:100%">
+        <button
+          style="height: min-content; width:28%"
+          class="btn btn-primary "
+          data-bs-toggle="modal"
+          data-bs-target="#filterLeaderboardModal"
+        ><i class="fa-solid fa-filter "></i>
+        &nbsp;&nbsp;FILTER
+        </button>
+      </div>
+    </div>
+    <div>
+      
+      <div class="mb-3" id="tableDiv" style="overflow: hidden"></div>
+    </div>
+  </main>
+  <!-- End Main -->
+</div>
+<%- include('../partials/footer') -%> <%-include("filterLeaderboardModal")-%>
+<%-include("workerDetailModal")-%> <%-include("workerAnalysisModal")-%>
+
+<!-- <script src="/scripts/addSubject.js"></script> -->
+<%- include('../partials/footer2') -%>
+<script>
+  $(document).ready(() => {
+    $("#subjectselect").val("");
+    $("#typeselect").val("");
+  });
+  function getQuizzes() {
+    let subject = $("#subjectselect").val();
+    let datefrom = $("#dateselectfrom").val();
+    let dateto = $("#dateselectto").val();
+    let type = $("#typeselect").val();
+    if (subject == "" || type == "") {
+      return;
+    }
+    console.log(subject + datefrom + dateto + type);
+    $.ajax({
+      type: "POST",
+      url: "/admin/getQuizzes",
+      data: { subject, datefrom, dateto, type },
+      success: (response) => {
+        console.log(response);
+        let html = "";
+        response.quizData.forEach((ele) => {
+          html += `<option value=${ele._id}>${ele.name}</option>`;
+        });
+        $("#quizselect").html(html);
+        $("#quizselect").select2();
+      },
+    });
+  }
+  function filterDataTable() {
+    let subject = $("#subjectselect").val();
+    let datefrom = $("#dateselectfrom").val();
+    let dateto = $("#dateselectto").val();
+    let type = $("#typeselect").val();
+    let quiz = $("#quizselect").val();
+    // console.log(date);
+    $.ajax({
+      type: "POST",
+      url: "/authority/leaderboard",
+      data: { subject, datefrom, dateto, type, quiz,admin:1 },
+      success: function (response) {
+        if (response.myArr.length != 0) {
+          workers = response.myArr;
+          // questions.forEach((ele)=>{console.log(ele.course_outcome_id)})
+          let def =
+            "<table class='uk-table uk-table-hover uk-table-striped text-center' id='datatable'><thead><th>Rank</th><th>Username</th><th>District</th><th>Attempts</th><th>Marks Obtained</th><th>Time Spent</th><th>Date</th><th>Actions</th></thead>";
+          let data = "";
+          workers.forEach((ele, ind) => {
+            data += `<tr>`;
+            data += `<td>${ind + 1}</td>`;
+            data += `<td>${ele[1].username}</td>`;
+            data += `<td>${ele[1].district}</td>`;
+            data += `<td>${ele[1].totalTimes}</td>`;
+            data += `<td>${(
+              (ele[1].marksObtained / ele[1].totalMarks) *
+              100
+            ).toFixed(2)}%</td>`;
+            data += `<td>${ele[1].timeSpent}s</td>`;
+            data += `<td>${new Date(ele[1].date).toLocaleDateString()}</td>`;
+            data += `<td><a  class="adder me-4"  data-id='${ele[0]}' onclick='openModal(this)'><i class='fa-solid fa-eye'></i></a><a data-id='${ele[0]}' class="adder " onclick='viewPerformance(this)'><i class=" fa-solid fa-chart-line text-success"></i></a></td>`;
+            data += `</tr>`;
+          });
+
+          $("#tableDiv").html(def + data + "</table>");
+          var myTable;
+
+          myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            scrollCollapse: true,
+
+            language: {
+              paginate: {
+                previous: "<",
+                next: ">",
+              },
+            },
+          });
+        }
+      },
+    });
+  }
+
+  function viewPerformance(e) {
+    let id = e.getAttribute("data-id");
+    let subjectId = $("#subjectselect").val();
+
+    $.ajax({
+      type: "POST",
+      url: "/authority/getPerformance",
+      data: { id, subjectId },
+      success: function (res) {
+        console.log(res);
+        createChart(res);
+      },
+    });
+    $("#exampleModal").modal("show");
+  }
+
+  function openModal(e) {
+    let id = e.getAttribute("data-id");
+    $.ajax({
+      type: "POST",
+      url: "/authority/workerDetails",
+      data: { id },
+      success: function (res) {
+        let linkss = "<ol>";
+        let arr = res.worker.enrolledSubjects.map(ele=>ele.subject.name);
+        var unique = arr.filter((value, index, array) => array.indexOf(value) === index);
+        unique.forEach((ele) => {
+          linkss += `<li>${ele}</li>`;
+        });
+        linkss += "</ol>"
+        $("#subjectModal").html(res.worker.name);
+        $("#moduleModal").html(res.worker.email);
+        $("#topicModal").html(res.worker.aadharCard);
+        $("#contentModal").html(res.worker.certificates.length);
+        $("#linksModal").html(linkss);
+        $("#resourcesModal").html(res.worker.phone);
+      },
+    });
+    $("#topicDetailModal").modal("show");
+  }
+</script>

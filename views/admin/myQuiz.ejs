@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<div class="grid-container">
+    <%- include("./adminHeader") %> <%- include("./adminSidebar") %>
+
+    <div class="main-container">
+        <div class="row ps-5 pe-5 align-items-center d-flex">
+            <div class="col h1">My Quiz</div>
+            <div class="col text-end">
+                <button
+                    style=" height: min-content"
+                    class="btn btn-primary"
+                    onclick="window.open('/admin/addQuiz/setQuiz','_self')"
+                >
+                    <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD
+                    QUIZ
+                </button>
+            </div>
+        </div>
+
+        <div class="mb-3" id="tableDiv" style="overflow: hidden">
+            <table
+                class="uk-table uk-table-hover uk-table-striped text-center"
+                id="datatable"
+            >
+                <thead>
+                    <th>Sr No.</th>
+                    <th>Quiz Name</th>
+                    <th>Marks</th>
+                    <th>Duration</th>
+                    <th>No of tests</th>
+                    <th>Actions</th>
+                </thead>
+                <tbody>
+                    <% quizData.forEach((element,index)=> { %>
+                    <td><%=index+1%></td>
+                    <td><%=element.name%></td>
+                    <td><%-element.marks_questions.map(ele=>ele.marks*ele.count).reduce((prev,curr)=>prev+curr,0)%></td>
+                    <td><%=element.duration%> minutes</td>
+                    <td><%=element.quizGiven%></td>
+                    <td>
+                        <a
+                            href="/authority/quiz/quizDetails/<%=element._id%>"
+                            class="adder"
+                            ><i
+                                class="fa-solid fa-eye fa-lg"
+                                title="More Details"
+                            ></i></a
+                        ><a href="/authority/generateReport/<%=element._id%>"
+                            ><i
+                                class="fa-solid fa-clipboard-list fa-lg text-success ms-3"
+                                title="Report"
+                            ></i
+                        ></a>
+                    </td>
+
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<%- include('../partials/footer') -%> 
+<script>
+    $(document).ready(() => {
+        myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            scrollCollapse: true,
+
+            language: {
+                paginate: {
+                    previous: "<",
+                    next: ">",
+                },
+            },
+        });
+    });
+</script>
+
+<%- include('../partials/footer2') -%>

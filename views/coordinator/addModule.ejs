@@ -1,0 +1,65 @@
+<div
+	class="modal fade"
+	id="moduleModal"
+	tabindex="-1"
+	aria-labelledby="moduleModalLabel"
+	aria-hidden="true"
+>
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="moduleModalLabel">ADD MODULE</h5>
+				<button
+					type="button"
+					class="btn-close"
+					data-bs-dismiss="modal"
+					aria-label="Close"
+				></button>
+			</div>
+
+			<div class="modal-body">
+				<form action="/coordinator/addModule" method="POST" id="sub-form">
+					<div class="mb-3">
+						<label for="subname" class="form-label"
+							>Module Name:</label
+						>
+						<input
+							type="text"
+							class="form-control"
+							id="subname"
+							name="moduleName"
+							required
+						/>
+						<input type="hidden" name="subjectId" value="<%= subjectId %>">
+					</div>
+					<!-- <div>
+						<label for="sem" class="form-label">Semester :</label>
+						<input
+							type="number"
+							class="form-control"
+							id="sem"
+							name="sem"
+							required
+						/>
+					</div> -->
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button
+					type="button"
+					class="btn btn-secondary"
+					data-bs-dismiss="modal"
+				>
+					Close
+				</button>
+				<button
+					onclick="document.getElementById('sub-form').submit()"
+					class="btn btn-primary"
+					form="sub-form"
+				>
+					Save changes
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

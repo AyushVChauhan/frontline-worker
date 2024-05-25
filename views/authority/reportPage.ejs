@@ -1,0 +1,783 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<%- include('../partials/footer') -%>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<style>
+  #datatable_wrapper {
+    margin: 0;
+  }
+
+  #datatable1_wrapper {
+    margin: 0;
+  }
+
+  .expandingDiv {
+    margin-top: -100%;
+    transition: all 1s;
+  }
+
+  #basicDetails {
+    opacity: 0;
+  }
+
+  #studentDetails {
+    opacity: 0;
+  }
+
+  #questionDetails {
+    opacity: 0;
+  }
+
+  .animate {
+    animation: fadeIn 1s linear forwards;
+  }
+
+  #downloadReport {
+    transition: all 0.5s;
+  }
+
+  #downloadReport:hover {
+    background-color: white;
+    color: #35013F;
+    box-shadow: 5px 5px;
+    border: none;
+  }
+
+  #chartDetails {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  #piechart,
+  #histogram,
+  #difficulty,
+  #difficultyMarksEasy,
+  #difficultyMarksMedium,
+  #difficultyMarksHard,
+  #difficultyTimePerformance,
+  #module,
+  #certificateStatus,
+  #moduleTime {
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #fff;
+  }
+  
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+</style>
+<%- include('../partials/footer') -%>
+<link
+  href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,1000&display=swap"
+  rel="stylesheet"
+/>
+
+<div class="grid-container">
+  <!-- Header -->
+  <%- include("./authorityHeader") %>
+  <!-- End Header -->
+
+  <!-- Sidebar -->
+  <%- include("./authoritySidebar") %>
+  <!-- End Sidebar -->
+
+  <!-- Main -->
+  <main class="main-container">
+    <div class="row mb-3">
+      <div class="col h1">Quiz Details</div>
+    </div>
+    <div class="row text-center mb-5">
+      <div class="col-4">
+        <button
+          class="btn rounded-pill"
+          style="background-color: #35013F"
+          id="chartBtn"
+          onclick="showChart()"
+        >
+          Chart Analysis
+        </button>
+      </div>
+      <div class="col-4">
+        <button
+          class="btn rounded-pill"
+          id="studentBtn"
+          onclick="showStudent()"
+        >
+          Student Details
+        </button>
+      </div>
+      <div class="col-4">
+        <button
+          class="btn btn-primary rounded-pill"
+          id="downloadReport"
+          onclick="window.open('/authority/downloadReport/<%=quiz._id%>', '_blank')"
+        >
+          Download Report
+        </button>
+      </div>
+    </div>
+
+    <div class="row" id="chartDetails">
+      <div id="piechart" style="height: 400px"></div>
+
+      <div id="histogram" style="height: 400px"></div>
+
+      <div id="difficulty" text-center style="width: 100%">
+        <div
+        style="
+          text-align: center;
+          font-weight: bold;
+          font-size: 20px;
+          color: #263238;
+        "
+      >
+        Question Difficulty Wise Performance
+      </div>
+        <div class="row">
+          <div class="col-6" id="difficultyMarksEasy"></div>
+          <div class="col-6" id="difficultyMarksMedium"></div>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
+          <div class="col-6" id="difficultyMarksHard"></div>
+        </div>
+      </div>
+
+      <div id="difficultyTimePerformance" text-center></div>
+
+      <div id="module" text-center></div>
+
+      <div id="moduleTime" text-center></div>
+      <div id="certificateStatus" text-center></div>
+
+    </div>
+
+    <div class="row" id="studentDetails">
+      <!-- srno
+            student
+            Status
+            Marks -->
+      <table
+        class="uk-table uk-table-hover uk-table-striped text-center"
+        id="datatable"
+      >
+        <thead>
+          <th class="text-center">Sr no.</th>
+          <th class="text-center">Username</th>
+          <th class="text-center">Date Given</th>
+          <th class="text-center">Status</th>
+          <th class="text-center">Marks</th>
+          <th class="text-center">Certificate</th>
+        </thead>
+        <tbody>
+          <% worker.forEach((element,index)=> { %>
+
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= element.username %></td>
+            <td>
+              <%- new
+              Date(element.dateGiven).toLocaleString('en-GB').split(",")[0] %>
+            </td>
+            <td><%- element.status %></td>
+            <td><%= element.marks %></td>
+            <td>
+              <a href="/coordinator/approve/<%= element.sessionId %>"
+                ><i class="fa-solid fa-file-circle-check"></i
+              ></a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <!-- End Main -->
+  </main>
+</div>
+<script>
+  function showChart() {
+    $("#chartDetails").show();
+    $("#studentDetails").hide();
+    document.getElementById("chartDetails").classList.add("animate");
+    $("#chartBtn").css("background-color", "white");
+    $("#chartBtn").css("color", "#35013F");
+    $("#chartBtn").css("box-shadow", "5px 5px");
+
+    $("#studentBtn").css("background-color", "#35013F");
+    $("#studentBtn").css("color", "white");
+    $("#studentBtn").css("box-shadow", "none");
+    drawChart();
+    drawHistogram();
+    drawDifficultyChart();
+    difficultyTimePerformance();
+    drawModuleChart();
+    drawModuleTime();
+    rejectedApproved();
+  }
+  function showStudent() {
+    $("#chartDetails").hide();
+    $("#studentDetails").show();
+    document.getElementById("studentDetails").classList.add("animate");
+    $("#chartBtn").css("background-color", "#35013F");
+    $("#chartBtn").css("color", "white");
+    $("#chartBtn").css("box-shadow", "none");
+
+    $("#studentBtn").css("background-color", "white");
+    $("#studentBtn").css("color", "#35013F");
+    $("#studentBtn").css("box-shadow", "5px 5px");
+  }
+
+  $(document).ready(() => {
+    var myTable;
+
+    let total = JSON.parse(`<%- JSON.stringify(total) %>`);
+    let moduleMarks = JSON.parse(`<%- JSON.stringify(moduleMarks) %>`);
+    let marksChart = JSON.parse(`<%- JSON.stringify(marksChart) %>`);
+
+    myTable = $("#datatable").DataTable({
+      pagingType: "simple_numbers",
+      language: {
+        paginate: {
+          previous: "<",
+          next: ">",
+        },
+      },
+    });
+    $("#studentBtn").click();
+    var myTable1;
+
+    myTable1 = $("#datatable1").DataTable({
+      pagingType: "simple_numbers",
+      language: {
+        paginate: {
+          previous: "<",
+          next: ">",
+        },
+      },
+      columnDefs: [
+        // Center align the header content of column 1
+        { className: "dt-head-center", targets: [0, 1] },
+      ],
+    });
+  });
+  function drawChart() {
+    let statusChart = JSON.parse(`<%- JSON.stringify(statusChart) %>`);
+    var options = {
+      title: {
+        text: "Workers' Status",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+        statusChart[0].num,
+        statusChart[1].num,
+        statusChart[2].num,
+        // statusChart.absent,
+      ],
+      chart: {
+        width: 380,
+        type: "pie",
+      },
+      labels: ["Not Submitted", "Submitted", "Disqualify"],
+      responsive: [
+        {
+          breakpoint: 2000,
+          options: {
+            chart: {
+              width: 500,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#piechart"), options);
+    chart.render();
+    //console.log(statusChart);
+  }
+  function drawHistogram() {
+    let arr = [];
+    let total = JSON.parse(`<%- JSON.stringify(total) %>`);
+    let marksChart = JSON.parse(`<%- JSON.stringify(marksChart) %>`);
+    console.log(marksChart);
+
+    for (let i = 0; i <= 4; i++) {
+      arr.push({
+        low: Math.floor((i * total) / 5.0),
+        high: Math.floor(((i + 1) * total) / 5.0),
+        count: 0,
+      });
+      marksChart.forEach((ele) => {
+        if (
+          ele[0] > Math.floor((i * total) / 5.0) &&
+          ele[0] <= Math.floor(((i + 1) * total) / 5.0) &&
+          ele[0] != 0
+        ) {
+          arr[i].count += ele[1];
+        }
+        if (ele[0] == 0) {
+          arr[0].count = ele[1];
+        }
+      });
+    }
+    var options = {
+      title: {
+        text: "Workers' Performance",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+        {
+          name: "Number of Students",
+          data: [...arr.map((ele) => ele.count)],
+        },
+      ],
+      chart: {
+        type: "bar",
+        height: 350,
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              position: "bottom",
+              offsetX: -10,
+              offsetY: 0,
+            },
+          },
+        },
+      ],
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          borderRadius: 10,
+          dataLabels: {
+            total: {
+              enabled: true,
+              style: {
+                fontSize: "13px",
+                fontWeight: 900,
+              },
+            },
+          },
+        },
+      },
+      xaxis: {
+        title: {
+          text: "Marks",
+        },
+
+        type: "string",
+        categories: [...arr.map((ele) => `${ele.low}-${ele.high}`)],
+      },
+      yaxis: {
+        title: {
+          text: "Number of Workers",
+        },
+      },
+      legend: {
+        show: true,
+        position: "bottom",
+      },
+      fill: {
+        opacity: 1,
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#histogram"), options);
+    chart.render();
+  }
+  function drawDifficultyChart() {
+    let difficultyMarks = JSON.parse(`<%- JSON.stringify(difficultyMarks) %>`);
+
+    var options = {
+      series: [
+        parseFloat(
+          (
+            (difficultyMarks[0].marksObtained / difficultyMarks[0].totalMarks) *
+            100
+          ).toFixed(2)
+        ),
+      ],
+      chart: {
+        height: 220,
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: "70%",
+          },
+        },
+      },
+      labels: ["Easy"],
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#difficultyMarksEasy"),
+      options
+    );
+    chart.render();
+    var options = {
+      series: [
+        parseFloat(
+          (
+            (difficultyMarks[1].marksObtained / difficultyMarks[1].totalMarks) *
+            100
+          ).toFixed(2)
+        ),
+      ],
+      chart: {
+        height: 220,
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: "70%",
+          },
+        },
+      },
+      labels: ["Medium"],
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#difficultyMarksMedium"),
+      options
+    );
+    chart.render();
+    var options = {
+      series: [
+        parseFloat(
+          (
+            (difficultyMarks[2].marksObtained / difficultyMarks[2].totalMarks) *
+            100
+          ).toFixed(2)
+        ),
+      ],
+      chart: {
+        height: 220,
+        type: "radialBar",
+      },
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            size: "70%",
+          },
+        },
+      },
+      labels: ["Hard"],
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#difficultyMarksHard"),
+      options
+    );
+    chart.render();
+  }
+  function difficultyTimePerformance() {
+    let timeDifficulty = JSON.parse(`<%- JSON.stringify(timeDifficulty) %>`);
+
+    let difficulty = [];
+    timeDifficulty.forEach((ele) => {
+      difficulty.push(ele.difficulty);
+    });
+    let difficultySeries = [];
+    let difficultySeries2 = [];
+
+    timeDifficulty.forEach((ele) => {
+      difficultySeries.push(ele.timeRequired);
+      difficultySeries2.push(ele.timeSpent);
+    });
+    var options = {
+      title: {
+        text: "Difficulty Wise Time Spent on Questions",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+        {
+          name: "Time Spent(Seconds)",
+          data: difficultySeries2,
+        },
+        {
+          name: "Time Required(Seconds)",
+          data: difficultySeries,
+        },
+      ],
+      chart: {
+        type: "bar",
+        height: 430,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          dataLabels: {
+            position: "top",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        style: {
+          fontSize: "12px",
+          colors: ["#fff"],
+        },
+      },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ["#fff"],
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: function (val) {
+            return val + " Seconds";
+          },
+        },
+      },
+      xaxis: {
+        categories: difficulty,
+      },
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#difficultyTimePerformance"),
+      options
+    );
+    chart.render();
+  }
+  function drawModuleChart() {
+    let moduleMarks = JSON.parse(`<%- JSON.stringify(moduleMarks) %>`);
+
+    let marks = [];
+    let module = [];
+   // moduleMarks.forEach((ele) => {
+     // let per = (ele[1].marksObtained / ele[1].totalMarks) * 100;
+
+      //marks.push(per.toFixed(2));
+     // module.push(ele[1].moduleName);
+    //});
+    for (let i = 0; i < moduleMarks.length; i++) {
+      let element = moduleMarks[i];
+      for (let j = 0; j < element[1].totalMarks.length; j++) {
+        if (element[1].totalMarks[j] == 0) {
+          element[1].totalMarks[j] = 1;
+        }
+      }
+    }
+
+    var options = {
+      title: {
+        text: "Difficulty Wise Performance of Modules",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+      {
+        data: moduleMarks.map((ele) =>
+          ((ele[1].marksObtained[0] / ele[1].totalMarks[0]) * 100).toFixed(2)
+        ),
+        name: "EASY",
+      },
+      {
+        data: moduleMarks.map((ele) =>
+          ((ele[1].marksObtained[1] / ele[1].totalMarks[1]) * 100).toFixed(2)
+        ),
+        name: "MEDIUM",
+      },
+      {
+        data: moduleMarks.map((ele) =>
+          ((ele[1].marksObtained[2] / ele[1].totalMarks[2]) * 100).toFixed(2)
+        ),
+        name: "HARD",
+      },
+      ],
+      chart: {
+        type: "bar",
+        height:430 ,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        formatter: function (val, opt) {
+          return val + " %";
+        },
+      },
+      xaxis: {
+        categories: moduleMarks.map((ele) => ele[1].moduleName),
+
+      },
+      tooltip: {
+        y: {
+          formatter: function (val) {
+            return val + "%";
+          },
+        },
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#module"), options);
+    chart.render();
+  }
+  function drawModuleTime() {
+    let timeModules = JSON.parse(`<%- JSON.stringify(timeModules) %>`);
+
+    let spentTime = [];
+    let requireTime = [];
+    let module = [];
+    timeModules.forEach((ele) => {
+      spentTime.push(ele[1].timeSpent);
+      requireTime.push(ele[1].timeRequired);
+      module.push(ele[1].moduleName);
+    });
+
+    var options = {
+      title: {
+        text: "Time Spent on Modules",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+        {
+          data: [...spentTime],
+          name: "Time Spent(Seconds)",
+        },
+        {
+          data: [...requireTime],
+          name: "Time Required(Seconds)",
+        },
+      ],
+      labels: ["Time Spent(Seconds)", "Time Required(Seconds)"],
+      chart: {
+        type: "bar",
+        height: 430,
+      },
+      plotOptions: {
+        bar: {
+          horizontal: true,
+          dataLabels: {
+            position: "top",
+          },
+        },
+      },
+      dataLabels: {
+        enabled: true,
+        offsetX: -6,
+        style: {
+          fontSize: "12px",
+          colors: ["#fff"],
+        },
+      },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ["#fff"],
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: function (val) {
+            return val + " Seconds";
+          },
+        },
+      },
+      xaxis: {
+        categories: [...module],
+      },
+    };
+
+    var chart = new ApexCharts(document.querySelector("#moduleTime"), options);
+    chart.render();
+  }
+
+  function rejectedApproved() {
+    let workerArray = JSON.parse(`<%- JSON.stringify(worker) %>`);
+    var options = {
+      title: {
+        text: "Certificate Approval Status",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      series: [
+        workerArray.filter((ele) => ele.evaluated == 0).length,
+        workerArray.filter((ele) => ele.evaluated == 1).length,
+        workerArray.filter((ele) => ele.evaluated == -1).length,
+        // statusChart.absent,
+      ],
+      chart: {
+        width: 380,
+        type: "pie",
+      },
+      labels: ["Pending", "Submitted", "Rejected"],
+      responsive: [
+        {
+          breakpoint: 2000,
+          options: {
+            chart: {
+              width: 500,
+            },
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      ],
+    };
+
+    var chart = new ApexCharts(
+      document.querySelector("#certificateStatus"),
+      options
+    );
+    chart.render();
+  }
+
+</script>
+<!-- <script src="/scripts/addSubject.js"></script> -->
+<%- include('../partials/sweetalert') %> <%- include('../partials/footer2') -%>

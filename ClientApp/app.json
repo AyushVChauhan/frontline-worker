@@ -1,0 +1,57 @@
+{
+	"expo": {
+		"name": "ClientApp",
+		"slug": "ClientApp",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"icon": "./assets/icon.png",
+		"userInterfaceStyle": "light",
+		"splash": {
+			"image": "./assets/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#ffffff"
+		},
+		"plugins": [
+			[
+				"expo-image-picker",
+				{
+					"photosPermission": "The app accesses your photos to let you share them with your friends."
+				}
+			],
+			[
+				"expo-build-properties",
+				{
+					"android": {
+						"usesCleartextTraffic": true
+					}
+				}
+			]
+		],
+		"assetBundlePatterns": ["**/*"],
+		"ios": {
+			"supportsTablet": true
+		},
+		"android": {
+			"adaptiveIcon": {
+				"foregroundImage": "./assets/adaptive-icon.png",
+				"backgroundColor": "#ffffff"
+			},
+			"permissions": [
+				"android.permission.CAMERA",
+				"android.permission.RECORD_AUDIO",
+				"android.permission.INTERNET",
+				"android.permission.POST_NOTIFICATIONS"
+			],
+			"package": "frontline.worker"
+		},
+		"web": {
+			"favicon": "./assets/favicon.png"
+		},
+		"extra": {
+			"eas": {
+				"projectId": "c81bd980-8878-4c78-9922-9894041ec1b6"
+			}
+		},
+		"owner": "avcthehero"
+	}
+}

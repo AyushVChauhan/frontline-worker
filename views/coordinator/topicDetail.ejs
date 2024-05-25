@@ -1,0 +1,125 @@
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<style>
+  .modaltopic {
+    display: inline-block;
+    font-size: 20px;
+  }
+</style>
+<div class="modal fade modal-xl" id="topicDetailModal" tabindex="-1" aria-labelledby="topicDetailModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="topicDetailModalLabel">Topic Detail</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+
+
+        <div class="question ">
+          <div class="modaltopic me-2  ">
+            <h4><b>Subject :</b></h4>
+          </div>
+
+          <div class="modaltopic " id="subjectModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question ">
+          <div class="modaltopic me-2  ">
+            <h4><b>Module :</b></h4>
+          </div>
+          <div class="modaltopic " id="moduleModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question ">
+          <div class="modaltopic me-2  ">
+            <h4><b>Topic :</b></h4>
+          </div>
+          <div class="modaltopic " id="topicModal">
+            <p></p>
+          </div>
+        </div>
+        <div class="question ">
+          <div class="modaltopic me-2  ">
+            <h4><b>Content :</b></h4>
+          </div>
+          <div class="modaltopic  " >
+            <p align="justify" class="" id="contentModal"></p>
+          </div>
+        </div>
+        <div class="question row ">
+          <div class="modaltopic me-2 col-auto ">
+            <h4><b>Links :</b></h4>
+          </div>
+          <div class=" col-auto">
+            <div class="modaltopic col-auto ">
+              <ol id="linksModal" style="list-style-type:none ; font-size:20px">
+              </ol>
+            </div>
+          </div>
+          
+        </div>
+        <div class="question row ">
+          <div class="modaltopic me-2 col-auto ">
+            <h4><b>Resources :</b></h4>
+          </div>
+          <div class=" col-auto">
+            <div class="modaltopic col-auto ">
+              <ol id="resourcesModal" style="list-style-type:none ; font-size:20px">
+              </ol>
+            </div>
+          </div>
+          
+        </div>
+        
+
+        <!-- <table border="1" style="border-collapse: collapse;">
+          <tr>
+            <td>Subject</td>
+            <td id="subjectModal">array</td>
+          </tr>
+          <tr>
+            <td>Module</td>
+            <td id="moduleModal">array</td>
+          </tr>
+          <tr>
+            <td>Topic</td>
+            <td id="topicModal">array</td>
+          </tr>
+          <tr>
+            <td>Content</td>
+            <td id="contentModal">
+              paragraph
+            </td>
+          </tr>
+          <tr>
+            <td>
+              link
+            </td>
+            <td id="linksModal">
+              googlr.com<br>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              resources
+            </td>
+            <td id="resourcesModal">
+              pdf
+            </td>
+          </tr>
+
+        </table> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

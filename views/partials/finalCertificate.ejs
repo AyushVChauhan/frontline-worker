@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+        <title>Certificate</title>
+
+        <style>
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                /* border: 1mm solid #991B1B; */
+                height: 188mm;
+            }
+
+            .border-pattern {
+                position: absolute;
+                left: 4mm;
+                top: -6mm;
+                height: 190mm;
+                width: 267mm;
+                border: 1mm solid #991B1B;
+                /* http://www.heropatterns.com/ */
+                background-color: #d6d6e4;
+                /* background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h16v2h-6v6h6v8H8v-6H2v6H0V0zm4 4h2v2H4V4zm8 8h2v2h-2v-2zm-8 0h2v2H4v-2zm8-8h2v2h-2V4z' fill='%23991B1B' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E"); */
+                background-color: #991B1B;
+            }
+
+            .content {
+                position: absolute;
+                left: 10mm;
+                top: 12.5mm;
+                height: 167mm;
+                width: 245mm;
+                border: 1mm solid #991B1B;
+                background: white;
+            }
+
+            .inner-content {
+                border: 1mm solid #991B1B;
+                margin: 4mm;
+                padding: 10mm;
+                height: 138mm;
+                text-align: center;
+            }
+
+            h1 {
+                text-transform: uppercase;
+                font-size: 48pt;
+                margin-bottom: 0;
+            }
+
+            h2 {
+                font-size: 24pt;
+                margin-top: 0;
+                padding-bottom: 1mm;
+                display: inline-block;
+                border-bottom: 1mm solid #991B1B;
+            }
+
+            h2::after {
+                content: "";
+                display: block;
+                padding-bottom: 4mm;
+                border-bottom: 1mm solid #991B1B;
+            }
+
+            h3 {
+                font-size: 20pt;
+                margin-bottom: 0;
+                margin-top: 10mm;
+            }
+
+
+            .on {
+                font-size: 20pt;
+                margin-top: -020px;
+            }
+
+            .name {
+                font-size: 40px;
+                font-weight: bold;
+                font-family: 'Great Vibes', cursive;
+                margin-top: 10px;
+            }
+
+            .subject {
+                font-size: 30px;
+                font-weight: bold;
+            }
+
+            .date {
+                font-size: 20px;
+                font-weight: 900;
+                font-family: 'Great Vibes', cursive;
+            }
+
+            .badge {
+                width: 40mm;
+                height: 40mm;
+                position: absolute;
+                right: 10mm;
+                bottom: 10mm;
+                background-image: url("https://api.qrserver.com/v1/create-qr-code/?size=151x151&data=<%=url%>");
+            }
+            .approvedByDiv {
+                position: absolute;
+                top: 80%;
+                left: 4%;
+            }
+            .approvedBy {
+                font-size: 20pt;
+                font-weight: bold;
+                margin-top: 0;
+                padding-bottom: 1mm;
+                border-bottom: 1mm solid #991B1B;
+
+            }
+            .govlogo {
+                width:40mm;
+                height: 40mm;
+                position: absolute;
+                left: 4%;
+                top: 4%;
+                background-size: cover;
+                background-image: url("/images/sj1.png");
+            }
+            .coord {
+                font-size: 20pt;
+                font-weight: bold;
+                position: relative;
+                margin-top: -15pt;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="border-pattern">
+            <div class="content">
+                <div class="inner-content">
+                    <div class="govlogo" ></div>
+                    <h1>Certificate</h1>
+                    <h2>of Accreditation</h2>
+                    <h3>This Certificate is presented to </h3>
+                    <p class="name"><%=name%></p>
+                    <h3 style="margin-top: -30px;">for successfully completing program titled</h3>
+                    <p class="subject" style="margin-top: 15px;"><%=subject%></p>
+                    <h3 class="on">On</h3>
+                    <p class="date"><%=date%></p>
+                    <div class="badge">
+                    </div>
+                    <div class="approvedByDiv">
+                        <p class="approvedBy">Approved By</p>
+                        <p class="coord name"><%= coordinator %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

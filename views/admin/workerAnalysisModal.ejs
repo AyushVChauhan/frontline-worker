@@ -1,0 +1,249 @@
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+  >
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Performance</h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row offset-1 mb-3">
+          <div
+            id="trainingChart"
+            class="col-5 me-3"
+            style="align-content: center; background-color: #f1f1f1"
+          ></div>
+
+          <div
+            id="chart"
+            class="col-5"
+            style="align-content: center; background-color: #f1f1f1"
+          ></div>
+        </div>
+        <div
+          id="marks"
+          class="offset-1"
+          style="
+            align-content: center;
+            background-color: #f1f1f1;
+            width: 80%;
+            height: 100%;
+          "
+        ></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var graph1 = null;
+  var graph2 = null;
+  var graph3 = null;
+  function marks(analysis) {
+    if (graph3 != null) {
+      graph3.destroy();
+    }
+    var options = {
+      series: [
+        {
+          name: "PERFORMANCE",
+          data: analysis.map((ele) => ele.performance),
+        },
+      ],
+      chart: {
+        type: "radar",
+      },
+      dataLabels: {
+        enabled: true,
+        background: {
+          enabled: true,
+          borderRadius: 2,
+        },
+        formatter :(val)=>val+"%"
+      },
+      plotOptions: {
+        radar: {
+          size: 230,
+          offsetY: 50,
+          offsetX:50,
+          polygons: {
+            strokeColors: "#fff",
+            fill: {
+              colors: ["#3498db"],
+            },
+          },
+        },
+      },
+      title: {
+        text: "Practice Test Performance",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      colors: ["#000", "#2ecc71", "#e74c3c"],
+
+      markers: {
+        size: 4,
+        colors: ["#fff"],
+        strokeColor: "#FF4560",
+        strokeWidth: 2,
+      },
+      xaxis: {
+        categories: analysis.map((ele) => ele.module),
+        labels: {
+          style: {
+            fontSize: '16px', 
+          },
+        },
+      },
+      yaxis: {
+        max: 100,
+        min: 0,
+        show: false,
+      },
+    };
+
+    graph3 = new ApexCharts(document.querySelector("#marks"), options);
+    graph3.render();
+  }
+
+  function practiceChart(e) {
+    if (graph1 != null) {
+      graph1.destroy();
+    }
+    var options = {
+      series: [
+        {
+          data: e.practiceData.map(
+            (ele) => ((ele.marksObtained / ele.totalMarks) * 100).toFixed(2)
+          ),
+          name:"PERFORMANCE"
+        },
+      ],
+      title: {
+        text: "Practice Test",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      chart: {
+        type: "line",
+        height: 280,
+        zoom: {
+          enabled: false,
+        },
+      },
+      stroke: {
+        curve: "straight",
+      },
+      dataLabels: {
+        enabled:true,
+        formatter: (val) => {
+          return val + "%";
+        },
+      },
+      yaxis: {
+        max: 100,
+        min:0,
+        labels:{
+
+          formatter: (val) => {
+            return val + "%";
+          },
+        }
+      },
+      xaxis: {
+        categories: e.practiceData.map((ele) =>
+          new Date(ele.date).toLocaleDateString()
+        ),
+      },
+    };
+    graph1 = new ApexCharts(document.querySelector("#chart"), options);
+    graph1.render();
+  }
+  function trainingChart(e) {
+    if (graph2 != null) {
+      graph2.destroy();
+    }
+    var options = {
+      series: [
+        {
+          data: e.trainingData.map(
+            (ele) => ((ele.marksObtained / ele.totalMarks) * 100).toFixed(2)
+          ),
+          name:"PERFORMANCE"
+
+        },
+      ],
+      title: {
+        text: "Training Test",
+        align: "center",
+        style: {
+          fontSize: "20px",
+          fontWeight: "bold",
+          color: "#263238",
+        },
+      },
+      chart: {
+        type: "line",
+        height: 280,
+        zoom: {
+          enabled: false,
+        },
+      },
+      stroke: {
+        curve: "straight",
+      },
+      dataLabels: {
+        enabled:true,
+        formatter: (val) => {
+          return val + "%";
+        },
+      },
+      yaxis: {
+        max: 100,
+        min:0,
+        labels:{
+
+          formatter: (val) => {
+            return val + "%";
+          },
+        }
+      },
+      xaxis: {
+        categories: e.trainingData.map((ele) =>
+          new Date(ele.date).toLocaleDateString()
+        ),
+      },
+    };
+    graph2 = new ApexCharts(document.querySelector("#trainingChart"), options);
+    graph2.render();
+  }
+  function createChart(e) {
+    practiceChart(e);
+    trainingChart(e);
+    marks(e.radialData);
+  }
+</script>

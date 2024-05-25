@@ -1,0 +1,134 @@
+<%- include('../partials/header') -%>
+<!-- For ckeditor -->
+<script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<%- include('../partials/footer') -%>
+
+<div class="grid-container">
+    <!-- Header -->
+    <%- include("./coordinatorHeader") %>
+    <!-- End Header -->
+
+    <!-- Sidebar -->
+    <%- include("./coordinatorSidebar") %>
+
+    <!-- End Sidebar -->
+    <div class="main-container">
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3 h1">Add Topic</div>
+                <div class="mb-3 h3">
+                    Subject : <%= module.subjectId.name %>
+                </div>
+                <div class="mb-3 h3">Module : <%= module.moduleName %></div>
+                <div class="mb-3" style="height: 350px; overflow-y: scroll">
+                    <div class="mb-3">
+						<input type="hidden" id="moduleId" value="<%= module._id %>">
+                        <label for="topicName" class="form-label"
+                            >Topic :</label
+                        >
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="topicName"
+                            name="topicName"
+                            oninput="document.getElementById('topicNamePreview').innerHTML = this.value"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="topicContent" class="form-label"
+                            >Content :</label
+                        >
+                        <div id="editor"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Links :</label>
+                        <div id="linksDiv">
+                            <input
+                                oninput="renderLinks()"
+                                type="text"
+                                class="form-control links"
+                                required
+                            />
+                        </div>
+                        <button
+                            class="btn btn-primary"
+                            id="addLinkButton"
+                            onclick="addLink()"
+                        >
+                            ADD
+                        </button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Resources :</label>
+                        <div class="mt-3" id="files">
+                            <div class="input-group" id="inputGroup1">
+                                <input
+                                    class="form-control"
+                                    type="text"
+                                    name=""
+                                    id="questionDesc1"
+                                    placeholder="Description"
+                                    oninput="descChange()"
+                                />
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="questionFile1"
+                                    name="question"
+                                    onchange="fileChange(this)"
+                                />
+                                <button
+                                    data-id="1"
+                                    class="btn btn-danger"
+                                    id="fileButton1"
+                                    onclick="removeFile(this)"
+                                >
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button
+                            class="btn btn-primary"
+                            id="addFileButton"
+                            onclick="addFile()"
+                        >
+                            ADD
+                        </button>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <button type="reset" id="reset" class="btn btn-secondary">
+                        Reset
+                    </button>
+                    <button
+                        type="button"
+                        id="addQuestion"
+                        class="btn btn-primary"
+                        onclick="addTopic()"
+                    >
+                        Save changes
+                    </button>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="h1">Preview</div>
+                <div>
+                    <div class="h3">
+                        Topic : <span id="topicNamePreview"></span>
+                    </div>
+                    <div>Content :</div>
+                    <div id="contentPreview" style="line-break: anywhere"></div>
+                    <div>Links :</div>
+                    <div id="linksPreview"></div>
+                    <div>Resources :</div>
+                    <div id="resourcesPreview"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/scripts/addTopic.js"></script>

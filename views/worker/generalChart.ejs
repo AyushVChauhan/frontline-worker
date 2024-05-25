@@ -1,0 +1,688 @@
+<html>
+
+<head>
+	<title>Chart</title>
+
+	<style>
+		.chart-container {
+			border: 1px solid #ccc;
+			padding: 10px;
+			margin: 10px;
+			background-color: #fff;
+		}
+	</style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+	let analysis = JSON.parse(`<%- JSON.stringify(analysis) %>`)
+	console.log(analysis[0]);
+</script>
+<style>
+	* {
+		font-size: 30px !important
+	}
+
+
+	.col-6 {
+		margin: 0;
+	}
+</style>
+
+<body>
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Subject Wise Marks Performance
+		</h1>
+		<div id="topicMarksPerformance"></div>
+	</div>
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Subject Wise Marks</h1>
+		<div id="topicMarks"></div>
+	</div>
+
+
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Time Spent Per Subject</h1>
+		<div id="topicTime"></div>
+	</div>
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Time Spent vs Time Required Per
+			Subject</h1>
+		<div id="topicTimePerformance"></div>
+	</div>
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 70px;">Difficulty Wise Performance</h1>
+		<div id="difficultyMarksEasy"></div>
+		<div id="difficultyMarksMedium"></div>
+		<div id="difficultyMarksHard"></div>
+	</div>
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 70px;">Marks Wise Performance</h1>
+		<div id="difficultyMarksPerformance"></div>
+	</div>
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Contribution of Each Difficulty
+			Level In Total Marks</h1>
+		<div id="difficultyMarksDonut"></div>
+	</div>
+
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Time Spent Per Difficulty</h1>
+		<div id="difficultyTime"></div>
+	</div>
+
+	<div class="chart-container">
+		<h1 style="font-size: 50px !important;text-align:center;margin-top: 200px;">Time Spent vs Time Required Per
+			Difficulty</h1>
+		<div id="difficultyTimePerformance"></div>
+	</div>
+
+
+	<script>
+		function difficultyMarks() {
+			let difficultyDetails = analysis[0];
+			console.log(difficultyDetails[0]);
+			var options = {
+				series: [
+					parseFloat(
+						(
+							(difficultyDetails[0].marksObtained /
+								difficultyDetails[0].totalMarks) *
+							100
+						).toFixed(2)
+					),
+				],
+				chart: {
+					type: "radialBar",
+				},
+				dataLabels: {
+					enabled: true,
+					style: {
+						fontSize: "1400px",
+					}
+				},
+				plotOptions: {
+					radialBar: {
+						hollow: {
+							size: "40%",
+						},
+					},
+				},
+				options: {
+					legend: {
+						fontSize: "100px"
+					}
+				},
+				labels: ["Easy"],
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyMarksEasy"),
+				options
+			);
+			chart.render();
+			var options = {
+				series: [
+					parseFloat(
+						(
+							(difficultyDetails[1].marksObtained /
+								difficultyDetails[1].totalMarks) *
+							100
+						).toFixed(2)
+					),
+				],
+				chart: {
+
+					type: "radialBar",
+				},
+				dataLabels: {
+					enabled: true,
+					style: {
+						fontSize: "40px",
+					}
+				},
+				plotOptions: {
+					radialBar: {
+						hollow: {
+							size: "40%",
+						},
+					},
+				},
+				legend: {
+					fontSize: "50px"
+				},
+				labels: ["Medium"],
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyMarksMedium"),
+				options
+			);
+			chart.render();
+			var options = {
+				series: [
+					parseFloat(
+						(
+							(difficultyDetails[2].marksObtained /
+								difficultyDetails[2].totalMarks) *
+							100
+						).toFixed(2)
+					),
+				],
+				chart: {
+
+					type: "radialBar",
+				},
+				dataLabels: {
+					enabled: true,
+					style: {
+						fontSize: "140px",
+						fontFamily: "Helvetica, Arial, sans-serif",
+						fontWeight: "bold"
+					}
+				},
+				plotOptions: {
+					radialBar: {
+						hollow: {
+							size: "40%",
+						},
+					},
+				},
+				labels: ["Hard"],
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyMarksHard"),
+				options
+			);
+			chart.render();
+		}
+		function difficultyMarksPerformance() {
+			let difficultyDetails = analysis[0];
+			let difficulty = [];
+			difficultyDetails.forEach((ele) => {
+				difficulty.push(ele);
+			});
+			let difficultySeries = [];
+			let difficultySeries2 = [];
+			difficultyDetails.forEach((ele) => {
+				difficultySeries.push(ele.marksObtained);
+				difficultySeries2.push(ele.totalMarks - ele.marksObtained);
+			});
+			var options = {
+				colors: ["#00E396", "#C70039"],
+				series: [
+					{
+						name: "Correct Marks",
+						data: difficultySeries,
+					},
+					{
+						name: "Wrong Marks",
+						data: difficultySeries2,
+					},
+				],
+				chart: {
+					type: "bar",
+
+					stacked: true,
+					toolbar: {
+						show: false,
+					},
+				},
+
+				plotOptions: {
+					bar: {
+						horizontal: false,
+						borderRadius: 10,
+						dataLabels: {
+							total: {
+								enabled: true,
+								style: {
+									fontSize: "13px",
+									fontWeight: 900,
+								},
+							},
+						},
+					},
+				},
+				xaxis: {
+					type: "string",
+					categories: ["Easy", "Medium", "Hard"],
+				},
+				fill: {
+					opacity: 1,
+				},
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyMarksPerformance"),
+				options
+			);
+			chart.render();
+		}
+		function difficultyMarks2() {
+			let totalQuestion;
+			let difficultyDetails = analysis[0];
+			console.log(difficultyDetails);
+			let difficulty = [];
+			difficultyDetails.forEach((ele) => {
+				difficulty.push(ele.difficulty);
+			});
+			let difficultySeries = [];
+			difficultyDetails.forEach((ele) => {
+				difficultySeries.push(ele.marksObtained);
+			});
+			var options = {
+				labels: difficulty,
+				series: difficultySeries,
+				chart: {
+					type: "donut",
+				},
+				plotOptions: {
+					pie: {
+						donut: {
+							labels: {
+								show: true,
+								total: {
+									show: true,
+									label: "Total",
+								},
+							},
+							size: "60%",
+						},
+					},
+				},
+				responsive: [
+					{
+						breakpoint: 2000,
+						options: {
+
+							legend: {
+								position: "bottom",
+							},
+						},
+					},
+				],
+
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyMarksDonut"),
+				options
+			);
+			chart.render();
+		}
+		function difficultyTime() {
+			let difficultyLabels = [];
+			let difficultyDetails = analysis[1];
+
+			difficultyDetails.forEach((ele) => {
+				difficultyLabels.push(ele.difficulty);
+			});
+			let difficultySeries = [];
+			difficultyDetails.forEach((ele) => {
+				difficultySeries.push(ele.timeSpent);
+			});
+			var options = {
+				labels: difficultyLabels,
+				series: difficultySeries,
+				chart: {
+					type: "donut",
+				},
+
+				plotOptions: {
+					pie: {
+						donut: {
+							labels: {
+								show: true,
+								total: {
+									show: true,
+									label: "Total(sec)",
+								},
+							},
+							size: "50%",
+						},
+					},
+				},
+
+
+				responsive: [
+					{
+						breakpoint: 2000,
+						options: {
+
+							legend: {
+								position: "bottom",
+							},
+						},
+					},
+				],
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyTime"),
+				options
+			);
+			chart.render();
+		}
+		function difficultyTimePerformance() {
+			let difficulty = [];
+			let difficultyDetails = analysis[1];
+
+			difficultyDetails.forEach((ele) => {
+				difficulty.push(ele.difficulty);
+			});
+			console.log(difficultyDetails);
+			let difficultySeries = [];
+			let difficultySeries2 = [];
+			let difficultySeries3 = [];
+			difficultyDetails.forEach((ele) => {
+				difficultySeries.push(ele.timeRequired);
+				difficultySeries2.push(ele.timeSpent);
+			});
+			var options = {
+				series: [
+					{
+						name: "Expected Time",
+						data: difficultySeries,
+					},
+					{
+						name: "Time Spent",
+						data: difficultySeries2,
+					},
+				],
+				chart: {
+					type: "bar",
+					height: 430,
+				},
+				plotOptions: {
+					bar: {
+						horizontal: false,
+						dataLabels: {
+							position: "top",
+						},
+					},
+				},
+				dataLabels: {
+					enabled: true,
+					style: {
+						fontSize: "12px",
+						colors: ["#fff"],
+					},
+				},
+				stroke: {
+					show: true,
+					width: 1,
+					colors: ["#fff"],
+				},
+				xaxis: {
+					categories: difficulty,
+				},
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#difficultyTimePerformance"),
+				options
+			);
+			chart.render();
+		}
+		function topicMarks() {
+			let topicDetails = analysis[2]
+			let topicLabels = [];
+			topicDetails.forEach((ele) => {
+				topicLabels.push(ele[1].name);
+			});
+			let topicSeries = [];
+			topicDetails.forEach((ele) => {
+				topicSeries.push(ele[1].marksObtained);
+			});
+			var options = {
+				labels: topicLabels,
+				series: topicSeries,
+				chart: {
+					type: "donut",
+				},
+				plotOptions: {
+					pie: {
+						donut: {
+							labels: {
+								show: true,
+								total: {
+									show: true,
+									label: "Total",
+								},
+							},
+							size: "50%",
+						},
+					},
+				},
+				responsive: [
+					{
+						breakpoint: 2000,
+						options: {
+
+							legend: {
+								position: "bottom",
+							},
+						},
+					},
+				],
+
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#topicMarks"),
+				options
+			);
+			chart.render();
+		}
+		function topicMarksPerformance() {
+			let topic = [];
+			let topicDetails = analysis[2]
+			topicDetails.forEach((ele) => {
+				topic.push(ele[1].name);
+			});
+
+			let topicSeries = [];
+			let topicSeries2 = [];
+			topicDetails.forEach((ele) => {
+				topicSeries.push(ele[1].marksObtained);
+				topicSeries2.push(ele[1].totalMarks - ele[1].marksObtained);
+			});
+			var options = {
+				colors: ["#00E396", "#C70039"],
+				series: [
+					{
+						name: "Correct Marks",
+						data: topicSeries,
+					},
+					{
+						name: "Wrong Marks",
+						data: topicSeries2,
+					},
+				],
+				chart: {
+					type: "bar",
+
+					stacked: true,
+					toolbar: {
+						show: false,
+					},
+				},
+
+				responsive: [
+					{
+						breakpoint: 2000,
+						options: {
+							options: {
+
+								legend: {
+									position: "bottom",
+								},
+							},
+						},
+					},
+				],
+				plotOptions: {
+					bar: {
+						horizontal: false,
+						borderRadius: 10,
+						dataLabels: {
+							total: {
+								enabled: true,
+								style: {
+									fontSize: "13px",
+									fontWeight: 900,
+								},
+							},
+						},
+					},
+				},
+				xaxis: {
+					type: "string",
+					categories: topic,
+				},
+				fill: {
+					opacity: 1,
+				},
+
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#topicMarksPerformance"),
+				options
+			);
+			chart.render();
+		}
+		function topicTime() {
+			let topicLabels = [];
+			let topicDetails = analysis[3]
+			topicDetails.forEach((ele) => {
+				topicLabels.push(ele[1].name);
+			});
+			let topicSeries = [];
+			topicDetails.forEach((ele) => {
+				topicSeries.push(ele[1].timeSpent);
+			});
+			var options = {
+				labels: topicLabels,
+				series: topicSeries,
+				chart: {
+					type: "donut",
+				},
+				plotOptions: {
+					pie: {
+						donut: {
+							labels: {
+								show: true,
+								total: {
+									show: true,
+									label: "Total(sec)",
+								},
+							},
+							size: "50%",
+						},
+					},
+				},
+				responsive: [
+					{
+						breakpoint: 2000,
+						options: {
+
+							legend: {
+								position: "bottom",
+							},
+						},
+					},
+				],
+
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#topicTime"),
+				options
+			);
+			chart.render();
+		}
+		function topicTimePerformance() {
+			let topic = [];
+
+			let topicDetails = analysis[3]
+			topicDetails.forEach((ele) => {
+				topic.push(ele[1].name);
+			});
+			let topicSeries = [];
+			let topicSeries2 = [];
+			topicDetails.forEach((ele) => {
+				topicSeries.push(ele[1].timeRequired);
+				topicSeries2.push(ele[1].timeSpent);
+			});
+			var options = {
+				series: [
+					{
+						name: "Expected Time",
+						data: topicSeries,
+					},
+					{
+						name: "Time Spent",
+						data: topicSeries2,
+					},
+				],
+				chart: {
+					type: "bar",
+
+				},
+				plotOptions: {
+					bar: {
+						horizontal: false,
+						dataLabels: {
+							position: "top",
+						},
+					},
+				},
+				dataLabels: {
+					enabled: true,
+					style: {
+						fontSize: "12px",
+						colors: ["#fff"],
+					},
+				},
+				stroke: {
+					show: true,
+					width: 1,
+					colors: ["#fff"],
+				},
+				xaxis: {
+					categories: topic,
+				},
+			};
+
+			var chart = new ApexCharts(
+				document.querySelector("#topicTimePerformance"),
+				options
+			);
+			chart.render();
+		}
+
+
+
+		difficultyMarks();
+		difficultyMarksPerformance()
+		difficultyMarks2();
+		difficultyTime();
+		difficultyTimePerformance()
+		topicMarks();
+		topicMarksPerformance();
+		topicTime();
+		topicTimePerformance();
+
+
+
+	</script>
+</body>
+
+</html>

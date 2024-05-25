@@ -1,0 +1,108 @@
+<%- include('../partials/header') %>
+<link rel="stylesheet" href="/stylesheets/style_temp.css" />
+<link rel="stylesheet" href="/stylesheets/datatables.css" />
+<div class="grid-container">
+  <%- include("./adminHeader") %> <%- include("./adminSidebar") %>
+
+  <div class="main-container">
+    <div class="row ps-5 pe-5 align-items-center d-flex">
+      <div class="col h1">Coordinators</div>
+
+      <div class="col text-end">
+        <button
+          style="height: min-content"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#coordinatorModal"
+        >
+          <i class="fa-regular fa-square-plus"></i>&nbsp;&nbsp;ADD COORDINATOR
+        </button>
+      </div>
+    </div>
+    <div class="row ps-5 pe-5 align-items-center d-flex">
+      <div class="col-sm-4 mt-3" style="width:100%">
+        <div
+          class="row d-flex  align-items-center"
+          style="width: 100%"
+        >
+          <div class="col-auto"><label>Select Subject</label></div>
+          <div class="col-auto" style="width:30%">
+            <select
+              style="width: 100%"
+              class="form-control"
+              name="subjectselect"
+              id="subjectselect"
+              onchange="filterDataTable()"
+            >
+              <option value="All" id="all1">All</option>
+              <% sub_data.forEach(element=> { %>
+              <option value="<%=element._id%>"><%=element.name%></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3" id="tableDiv" style="overflow: hidden"></div>
+  </div>
+</div>
+<%- include("./addCoordinator") %> <%- include('../partials/footer') -%>
+<script>
+  $(document).ready(() => {
+    $("#all1").change();
+  });
+  function filterDataTable() {
+    let subjectId = $("#subjectselect").val();
+    $.ajax({
+      type: "POST",
+      url: "/admin/getCoordinator",
+      data: { subjectId },
+      success: function (response) {
+        if (response.length !== 0) {
+          coordinators = response.coordinatorData;
+          // questions.forEach((ele)=>{console.log(ele.course_outcome_id)})
+          let def =
+            "<table class='uk-table uk-table-hover uk-table-striped text-center' id='datatable'><thead><th>Sr No.</th><th>Username</th><th>Name</th><th>Email</th><th>Subjects</th></thead>";
+          let data = "";
+          coordinators.forEach((ele, ind) => {
+            data += "<tr>";
+            data += `<td>${ind + 1}</td>`;
+            data += `<td>${ele.username}</td>`;
+
+            data += `<td>${ele.name}</td>`;
+            data += `<td>${ele.email}</td>`;
+            data += `<td>`;
+
+            ele.subjectIds.forEach((subject) => {
+              data += `${subject.name}<br>`;
+            });
+
+            data += `</td>`;
+
+            data += "</tr>";
+          });
+
+          $("#tableDiv").html(def + data + "</table>");
+          var myTable;
+
+          myTable = $("#datatable").DataTable({
+            pagingType: "simple_numbers",
+            scrollCollapse: true,
+
+            language: {
+              paginate: {
+                previous: "<",
+                next: ">",
+              },
+            },
+          });
+          // abc();
+        }
+      },
+    });
+  }
+</script>
+
+<script src="/scripts/addTeacher.js"></script>
+<%- include('../partials/footer2') -%>
